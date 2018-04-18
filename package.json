@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@shopify/javascript-utilities": "^2.1.0",
     "@shopify/polaris": "^2.0.0-beta.17",
     "apollo-boost": "^0.1.4",
     "apollo-server-koa": "^1.3.4",
@@ -15,13 +16,22 @@
     "react": "^16.3.2",
     "react-apollo": "^2.1.3",
     "react-dom": "^16.3.2",
+    "react-router-dom": "4.2.2",
     "react-scripts": "1.1.4"
   },
   "devDependencies": {
-    "babel-core": "6.26.0",
     "babel-cli": "^6.26.0",
+    "babel-core": "7.0.0-beta.3",
+    "babel-plugin-transform-decorators": "^6.24.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
     "babel-preset-shopify": "16.3.0",
-    "concurrently": "^3.5.1"
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "concurrently": "^3.5.1",
+    "eslint": "^4.8.0",
+    "eslint-plugin-shopify": "^19.0.0"
   },
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"npm run server\"",

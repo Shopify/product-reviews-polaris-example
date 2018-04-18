@@ -1,0 +1,13 @@
+.Rating {
+  display: flex;
+}
+
+.Rating__Star {
+  color: transparent;
+  fill: #eec200;
+}
+
+.Rating__Star--Filled {
+  color: #eec200;
+  fill: #eec200;
+}

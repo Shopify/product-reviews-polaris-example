@@ -1,27 +1,42 @@
 import React, {Component} from 'react';
 import ApolloClient from 'apollo-boost';
 import {ApolloProvider} from 'react-apollo';
-import {AppProvider, Page, EmptyState} from '@shopify/polaris';
+import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
+import {AppProvider} from '@shopify/polaris';
+
+import ReviewList from './routes/ReviewList';
+import ReviewDetails from './routes/ReviewDetails';
+import Settings from './routes/Settings';
+import NotFound from './routes/NotFound';
 
 import '@shopify/polaris/styles.css';
 
 const client = new ApolloClient();
 
+const CustomLinkComponent = ({ children, url, ...rest }) => {
+  return (
+    <Link to={url} {...rest}>
+      {children}
+    </Link>
+  );
+};
+
 class App extends Component {
   render() {
-    const emptyState = <EmptyState heading="You haven't received any reviews yet" action={{ content: "Configure settings" }} secondaryAction={{ content: "Learn more", url: "https://help.shopify.com" }} image="https://uploads.codesandbox.io/uploads/user/1235c92d-7d36-443f-81d7-db0974fe238d/Ffo4-Product.svg">
-        <p>
-          Once you have received reviews they will display on this page.
-        </p>
-      </EmptyState>;
-
-    return <AppProvider>
+    return (
+      <AppProvider linkComponent={CustomLinkComponent}>
         <ApolloProvider client={client}>
-            <Page title="Product reviews">
-                {emptyState}
-            </Page>
+          <Router>
+            <Switch>
+              <Route exact path="/" component={ReviewList} />
+              <Route path="/reviews/:id" component={ReviewDetails} />
+              <Route exact path="/settings" component={Settings} />
+              <Route component={NotFound} />
+            </Switch>
+          </Router>
         </ApolloProvider>
-      </AppProvider>;
+      </AppProvider>
+    );
   }
 }
 
