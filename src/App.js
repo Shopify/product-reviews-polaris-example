@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import ApolloClient from 'apollo-boost';
 import {ApolloProvider} from 'react-apollo';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
@@ -13,7 +13,7 @@ import '@shopify/polaris/styles.css';
 
 const client = new ApolloClient();
 
-const CustomLinkComponent = ({ children, url, ...rest }) => {
+const CustomLinkComponent = ({children, url, ...rest}) => {
   return (
     <Link to={url} {...rest}>
       {children}
@@ -21,23 +21,21 @@ const CustomLinkComponent = ({ children, url, ...rest }) => {
   );
 };
 
-class App extends Component {
-  render() {
-    return (
-      <AppProvider linkComponent={CustomLinkComponent}>
-        <ApolloProvider client={client}>
-          <Router>
-            <Switch>
-              <Route exact path="/" component={ReviewList} />
-              <Route path="/reviews/:id" component={ReviewDetails} />
-              <Route exact path="/settings" component={Settings} />
-              <Route component={NotFound} />
-            </Switch>
-          </Router>
-        </ApolloProvider>
-      </AppProvider>
-    );
-  }
+function App() {
+  return (
+    <AppProvider linkComponent={CustomLinkComponent}>
+      <ApolloProvider client={client}>
+        <Router>
+          <Switch>
+            <Route exact path="/" component={ReviewList} />
+            <Route path="/reviews/:id" component={ReviewDetails} />
+            <Route exact path="/settings" component={Settings} />
+            <Route component={NotFound} />
+          </Switch>
+        </Router>
+      </ApolloProvider>
+    </AppProvider>
+  );
 }
 
 export default App;

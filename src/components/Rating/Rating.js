@@ -1,24 +1,26 @@
-import React from "react";
-import { Icon } from "@shopify/polaris";
+import React from 'react';
+import {Icon} from '@shopify/polaris';
 
-import "./Rating.css";
+import './Rating.css';
 
-import {star} from "../../icons";
+import {star} from '../../icons';
 
 export default function Rating(props) {
-  const { value } = props;
+  const {value} = props;
 
-  let ratings = [];
+  const ratings = [];
 
   for (let i = 0; i < 5; i++) {
     const className =
       i < Math.floor(value)
-        ? "Rating__Star Rating__Star--Filled"
-        : "Rating__Star";
+        ? 'Rating__Star Rating__Star--Filled'
+        : 'Rating__Star';
 
-    ratings.push(<span className={className} key={`rating-${i}`}>
+    ratings.push(
+      <span className={className} key={`rating-${i}`}>
         <Icon source={star} />
-      </span>);
+      </span>,
+    );
   }
 
   return <span className="Rating">{ratings}</span>;

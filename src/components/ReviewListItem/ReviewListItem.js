@@ -1,19 +1,13 @@
-import React from "react";
-import {
-  Avatar,
-  Badge,
-  ResourceList,
-  Stack,
-  TextStyle
-} from "@shopify/polaris";
+import React from 'react';
+import {Avatar, Badge, ResourceList, Stack, TextStyle} from '@shopify/polaris';
 
-import "./ReviewListItem.css";
+import './ReviewListItem.css';
 
 export default function ReviewListItem(props) {
-  const { id, title, date, product, customer, status } = props;
+  const {id, title, date, product, customer, status} = props;
 
   const badge =
-    status === "published" ? (
+    status === 'published' ? (
       <Badge status="success">Published</Badge>
     ) : (
       <Badge status="attention">Unpublished</Badge>

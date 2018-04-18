@@ -95,7 +95,7 @@ const resolvers = {
   Query: {
     reviews: () => reviews,
     review(obj, args) {
-      return reviews.find((review) => `${review.id}` === args.id);
+      return reviews.find((review) => review.id === args.id);
     },
     settings: () => settings,
   },

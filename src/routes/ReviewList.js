@@ -6,7 +6,6 @@ import {
   EmptyState,
   Card,
   ResourceList,
-  SkeletonPage,
   SkeletonBodyText,
   SkeletonDisplayText,
   TextContainer,
@@ -16,20 +15,28 @@ import ReviewListItem from '../components/ReviewListItem';
 import {settings} from '../icons';
 
 function ReviewList(props) {
-  const {loading, data} = props;
+  const {
+    data: {loading, reviews},
+  } = props;
+
   if (loading) {
     return (
-      <SkeletonPage secondaryActions={2}>
+      <Page
+        title="Product reviews"
+        secondaryActions={[
+          {icon: settings, content: 'Settings', url: '/settings'},
+        ]}
+      >
         <Card sectioned>
           <TextContainer>
             <SkeletonDisplayText size="small" />
             <SkeletonBodyText />
           </TextContainer>
         </Card>
-      </SkeletonPage>
+      </Page>
     );
   }
-  const {reviews} = data;
+
   const pageContent =
     reviews.length === 0 ? (
       <EmptyState
@@ -67,7 +74,7 @@ function ReviewList(props) {
 }
 
 export default graphql(gql`
-  query SettingsQuery {
+  query ReviewsQuery {
     reviews {
       id
       title
