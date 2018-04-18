@@ -46,7 +46,7 @@ function ReviewList(props) {
           content: 'Learn more',
           url: 'https://help.shopify.com',
         }}
-        image="https://uploads.codesandbox.io/uploads/user/1235c92d-7d36-443f-81d7-db0974fe238d/Ffo4-Product.svg"
+        image="/review-empty-state.svg"
       >
         <p>Once you have received reviews they will display on this page.</p>
       </EmptyState>
