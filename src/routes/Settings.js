@@ -1,5 +1,5 @@
 import React from 'react';
-import {graphql} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 import gql from 'graphql-tag';
 import {autobind} from '@shopify/javascript-utilities/decorators';
 import {
@@ -22,14 +22,17 @@ class Settings extends React.Component {
     autoPublish: false,
     email: '',
     emailNotifications: false,
+    emailError: false,
   };
 
-  static getDerivedStateFromProps(nextProps) {
-    const {autoPublish, email, emailNotifications} = nextProps;
-
-    if (!autoPublish || !email || !emailNotifications) {
+  static getDerivedStateFromProps({settingsQuery}) {
+    if (settingsQuery.loading) {
       return null;
     }
+
+    const {
+      settings: {autoPublish, email, emailNotifications},
+    } = settingsQuery;
 
     return {autoPublish, email, emailNotifications};
   }
@@ -129,7 +132,13 @@ class Settings extends React.Component {
               </Card>
             </Layout.AnnotatedSection>
             <Layout.Section>
-              <PageActions primaryAction={{content: 'Save', submit: true}} />
+              <PageActions
+                primaryAction={{
+                  content: 'Save',
+                  submit: true,
+                  disabled: emailError,
+                }}
+              />
             </Layout.Section>
           </Layout>
         </Page>
@@ -161,17 +170,59 @@ class Settings extends React.Component {
   }
 
   @autobind
-  handleFormSubmit() {
-    // Submit form data to your API from state
+  async handleFormSubmit() {
+    const {updateSettingsMutation} = this.props;
+    const {autoPublish, emailNotifications, email, emailError} = this.state;
+
+    if (emailError) {
+      return;
+    }
+
+    await updateSettingsMutation({
+      variables: {
+        autoPublish,
+        emailNotifications,
+        email,
+      },
+    });
   }
 }
 
-export default graphql(gql`
-  query SettingsQuery {
-    settings {
-      autoPublish
-      emailNotifications
-      email
-    }
-  }
-`)(Settings);
+export default compose(
+  graphql(
+    gql`
+      query SettingsQuery {
+        settings {
+          autoPublish
+          emailNotifications
+          email
+        }
+      }
+    `,
+    {
+      name: 'settingsQuery',
+    },
+  ),
+  graphql(
+    gql`
+      mutation updateSettings(
+        $autoPublish: Boolean
+        $emailNotifications: Boolean
+        $email: String
+      ) {
+        updateSettings(
+          autoPublish: $autoPublish
+          emailNotifications: $emailNotifications
+          email: $email
+        ) {
+          autoPublish
+          emailNotifications
+          email
+        }
+      }
+    `,
+    {
+      name: 'updateSettingsMutation',
+    },
+  ),
+)(Settings);

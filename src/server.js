@@ -44,6 +44,10 @@ const typeDefs = `
     review(id: Int!): Review
     settings: Settings
   }
+
+  type Mutation {
+    updateSettings(autoPublish: Boolean, emailNotifications: Boolean, email: String): Settings
+  }
 `;
 
 const reviews = [
@@ -85,7 +89,7 @@ const reviews = [
   },
 ];
 
-const settings = {
+let settings = {
   autoPublish: false,
   emailNotifications: false,
   email: '',
@@ -98,6 +102,15 @@ const resolvers = {
       return reviews.find((review) => review.id === args.id);
     },
     settings: () => settings,
+  },
+  Mutation: {
+    updateSettings: (root, args) => {
+      settings = {
+        autoPublish: args.autoPublish,
+        emailNotifications: args.emailNotifications,
+        email: args.email,
+      };
+    },
   },
 };
 
