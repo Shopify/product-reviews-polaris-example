@@ -1,3 +1,13 @@
 {
-  "presets": [["shopify/node", { "modules": "commonjs" }], "shopify/react"]
+  "presets": [
+    [
+      "shopify/node",
+      {
+        "modules": "commonjs"
+      }
+    ],
+    "shopify/web",
+    "shopify/react"
+  ],
+  "plugins": ["transform-decorators-legacy"]
 }

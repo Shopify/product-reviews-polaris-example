@@ -1,0 +1,23 @@
+.ReviewListItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -2rem;
+  margin-left: -2rem;
+}
+
+.ReviewListItem > * {
+  margin-top: 2rem;
+  margin-left: 2rem;
+}
+
+.ReviewListItem__Content {
+  flex: 1 1 30rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.ReviewListItem__MetaData {
+  flex: 0 0 15rem;
+}
