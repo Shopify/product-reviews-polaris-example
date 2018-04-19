@@ -1,19 +1,13 @@
-# Workshop
+# Polaris Workshop
 
 ## Introduction to Polaris and the Style Guide (5 min) - Dom
 
-### What is Polaris? (1 min)
+### What is Polaris?
 
 * Shopify’s design system, provides a common framework with which to build high quality experiences for merchants and partners
 * Consists of UI design and development kits, design and content guidelines and more
 
-### Why is it open source? (1 min)
-
-* Apps critical part of Shopify ecosystem
-* Better developer experience
-* Consistency supports effective merchant workflow
-
-### How should you use it? (1 min)
+### How should you use it?
 
 * Style guide
 * Guidelines
@@ -21,7 +15,7 @@
 * What’s new
 * Examples
 
-### Workshop overview (1 min)
+### Workshop overview
 
 Together we will be building out a product review app to manage the customer submitted reviews on our products.
 
