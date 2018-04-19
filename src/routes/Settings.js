@@ -170,7 +170,7 @@ class Settings extends React.Component {
   }
 
   @autobind
-  async handleFormSubmit() {
+  handleFormSubmit() {
     const {updateSettingsMutation} = this.props;
     const {autoPublish, emailNotifications, email, emailError} = this.state;
 
@@ -178,7 +178,7 @@ class Settings extends React.Component {
       return;
     }
 
-    await updateSettingsMutation({
+    updateSettingsMutation({
       variables: {
         autoPublish,
         emailNotifications,
