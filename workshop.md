@@ -1,6 +1,39 @@
 # Workshop
 
+## Introduction to Polaris and the Style Guide (5 min) - Dom
+
+### What is Polaris? (1 min)
+
+* Shopify’s design system, provides a common framework with which to build high quality experiences for merchants and partners
+* Consists of UI design and development kits, design and content guidelines and more
+
+### Why is it open source? (1 min)
+
+* Apps critical part of Shopify ecosystem
+* Better developer experience
+* Consistency supports effective merchant workflow
+
+### How should you use it? (1 min)
+
+* Style guide
+* Guidelines
+* Component reference
+* What’s new
+* Examples
+
+### Workshop overview (1 min)
+
 Together we will be building out a product review app to manage the customer submitted reviews on our products.
+
+#### Goals
+
+Give attendees a high level view of what Polaris (both the components and our documentation) can give them and an overview of the process of building an app using those tools.
+
+#### Structure
+
+* Introduction
+* Building the product review app using Polaris React
+* Q & A
 
 At the end of this workshop you will have built something that looks like this.
 
@@ -10,11 +43,9 @@ At the end of this workshop you will have built something that looks like this.
 
 ![Settings page screenshot](public/images/settings-screenshot.png)
 
-## Clone the example repo
+## Step 1: Setting up your app (Dom 15 minutes)
 
 `git clone git@github.com:Shopify/product-reviews-polaris-example.git`
-
-## Step 1: Setting up your app
 
 First we need to install the Polaris React package from npm.
 
@@ -44,7 +75,7 @@ Looking at the structure of our app we are going to be building we will be makin
 
 The show page is where the details about the review will be listed.
 
-## Step 2: Reviews index
+## Step 2: Reviews index (Chloe 15 minutes)
 
 Let's start by setting up our index page. Go ahead and open up `src/routes/ReviewList.js`. You will notice we already have a GraphQL query setup to fetch the list of reviews.
 
@@ -180,7 +211,7 @@ const pageContent =
 return <Page title="Product reviews">{pageContent}</Page>;
 ```
 
-## Step 2: Review details
+## Step 2: Review details (Dom 15 minutes)
 
 Now that we have our index page working, we will move onto the page to display the details for each review.
 
@@ -287,7 +318,7 @@ We will then output the result of that badge into our stack.
 </Stack>
 ```
 
-## Step 3: Settings and forms
+## Step 3: Settings and forms (Chloe 15 minutes)
 
 Now that we have the index and show pages done for our reviews, we will move onto the settings page.
 
@@ -409,3 +440,5 @@ Finally, we need to add a submit button to be able to actually submit the form. 
 ```
 
 And that's it. We now have a great start on our app. Feel free to continue exploring the rest of the code there, try out some new components, or even build some of your own.
+
+## Closing thoughts / QA (Dom 10 minutes)
