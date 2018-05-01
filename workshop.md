@@ -1,6 +1,6 @@
 # Polaris Workshop
 
-## Introduction to Polaris and the Style Guide (5 min) - Dom
+## Introduction to Polaris and the Style Guide - Dom
 
 ### What is Polaris?
 
@@ -11,7 +11,7 @@
 
 * Style guide
 * Guidelines
-* Components
+* Component reference
 * What’s new
 * Examples
 
@@ -37,7 +37,7 @@ At the end of this workshop you will have built something that looks like this.
 
 ![Settings page screenshot](public/images/settings-screenshot.png)
 
-## Step 1: Setting up your app (Dom 15 minutes)
+## Step 1: Setting up your app (Dom)
 
 `git clone git@github.com:Shopify/product-reviews-polaris-example.git`
 
@@ -107,22 +107,41 @@ Now we will pass this custom link component into our `AppProvider`
 
 Great. Now Polaris will render react router links everywhere instead to the default `<a>` tags.
 
-## Step 2: Reviews index (Chloe 15 minutes)
+Looking at the structure of our app we are going to be building we will be making use of the index and show structure. The index will act as the listing of reviews. Its aim will be to find the review we want to look at and navigate to the show page to see more details about the review.
 
-Looking at the structure of our app we are going to be building we will be making use of the index and details structure. The index will act as the listing of reviews. Its aim will be to find the review we want to look at and navigate to see more details about the review.
+I will hand it over to Chloe now as she walks you through setting up the review index.
 
-The show page is where the details about the review will be listed.
+## Step 2: Reviews index (Chloe)
 
-Let's start by setting up our index page. Go ahead and open up `src/routes/ReviewList.js`. You will notice we already have a GraphQL query setup to fetch the list of reviews.
+`git checkout step2`
+
+Go ahead and open up `src/routes/ReviewList.js`. You will notice we already have a GraphQL query setup to fetch the list of reviews.
 
 Let's start building out the UI of this page using Polaris.
 
 ### Page
 
-The page component should wrap each page in your app in. It accepts a title prop that you can use to give the page a title.
+We will start with the [Page]() component. The page component should wrap each page in your app in. It accepts a title prop that you can use to give the page a title.
 
 ```jsx
 <Page title="Product reviews" />
+```
+
+The Page component also accepts a list of secondary actions. We want to add one that will link to our settings page.
+
+We have already included a settings icon you can use for this, so let's import it.
+
+```jsx
+import {settings} from '../icons';
+```
+
+And then use it in our Page component with
+
+```jsx
+<Page
+  title="Product reviews"
+  secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}]}
+/>
 ```
 
 ### Card
@@ -130,12 +149,17 @@ The page component should wrap each page in your app in. It accepts a title prop
 We will then add a Card component inside our Page. Cards are used to group similar concepts and tasks together to make Shopify easier for merchants to scan, read, and get things done.
 
 ```jsx
-<Page title="Product reviews">
-  <Card />
+<Page
+  title="Product reviews"
+  secondaryActions={[
+    {icon: settings, content: 'Settings', url: '/settings'},
+  ]}
+>
+  <Card sectioned>
 </Page>
 ```
 
-When building a new view for your application you should always consider all the different states for your data. Loading, empty, some and lots.
+When building a new view for your application you should always consider all the different states for your data. Loading, empty, some and many.
 
 ### Loading state
 
@@ -144,7 +168,10 @@ We will start with the loading state. This is what will be shown as the network 
 Import the components you need from Polaris and put them inside our Card component we added.
 
 ```jsx
-<Page title="Product reviews">
+<Page
+  title="Product reviews"
+  secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}]}
+>
   <Card sectioned>
     <TextContainer>
       <SkeletonDisplayText size="small" />
@@ -244,10 +271,19 @@ const pageContent =
     </Card>
   );
 
-return <Page title="Product reviews">{pageContent}</Page>;
+return (
+  <Page
+    title="Product reviews"
+    secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}]}
+  >
+    {pageContent}
+  </Page>
+);
 ```
 
-## Step 3: Review details (Dom 15 minutes)
+## Step 3: Review details (Dom)
+
+`git checkout step3`
 
 Now that we have our index page working, we will move onto the page to display the details for each review.
 
@@ -255,7 +291,7 @@ Now that we have our index page working, we will move onto the page to display t
 
 Looking at our mockup or this page we will notice it should display in two columns on larger screens. We will use the `Layout` component from Polaris to do this.
 
-Inside the Page component that is there already add our layout.
+Open up `src/routes/ReviewDetails.js` add a Page component with a breadcrumb and the layout inside of it.
 
 ```jsx
 <Page title={review.title} breadcrumbs={[{content: 'All reviews', url: '/'}]}>
@@ -354,7 +390,44 @@ We will then output the result of that badge into our stack.
 </Stack>
 ```
 
-## Step 4: Settings and forms (Chloe 15 minutes)
+So this looks great, but you will notice the badge is right up against the customer name and we want it to be pushed to the right side. To do this we are going to use a `Stack.Item` with the fill prop around our customer name. This will allow that content to stretch and fill any space that it can.
+
+```jsx
+<Stack.Item fill>
+  <p>{review.customer.name}</p>
+</Stack.Item>
+```
+
+Great. Now you will see the badge pushed over to the right side of the card where we want it.
+
+So next we are going to add the secondary card with our product information. Inside you `<Layout.Section secondary>` add the following content.
+
+```jsx
+<Card>
+  <Card.Section>
+    <Stack alignment="center" distribution="equalSpacing">
+      <Stack alignment="center">
+        <Thumbnail
+          source="https://cdn.shopify.com/s/files/1/1602/3257/products/paste-prod_thumb.jpg"
+          alt=""
+          size="medium"
+        />
+        <TextStyle variation="strong">{review.product.name}</TextStyle>
+      </Stack>
+      <Stack>
+        <Rating value={review.product.averageRating} />
+        <p>{review.product.reviewCount} reviews</p>
+      </Stack>
+    </Stack>
+  </Card.Section>
+</Card>
+```
+
+Here you will see we are using the stack again for layout, a thumbnail to display the product image, reusing our custom Rating component, and utilizing the `TextStyle` component to bold the product name text.
+
+## Step 4: Settings and forms (Chloe)
+
+`git checkout step4`
 
 Now that we have the index and show pages done for our reviews, we will move onto the settings page.
 
@@ -477,4 +550,4 @@ Finally, we need to add a submit button to be able to actually submit the form. 
 
 And that's it. We now have a great start on our app. Feel free to continue exploring the rest of the code there, try out some new components, or even build some of your own.
 
-## Closing thoughts / QA (Dom 10 minutes)
+## Closing thoughts / QA (Dom)
