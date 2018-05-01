@@ -13,9 +13,17 @@ import NotFound from './routes/NotFound';
 
 const client = new ApolloClient();
 
+const CustomLinkComponent = ({children, url, ...rest}) => {
+  return (
+    <Link to={url} {...rest}>
+      {children}
+    </Link>
+  );
+};
+
 function App() {
   return (
-    <AppProvider>
+    <AppProvider linkComponent={CustomLinkComponent}>
       <ApolloProvider client={client}>
         <Router>
           <Switch>
