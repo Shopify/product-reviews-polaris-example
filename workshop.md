@@ -247,7 +247,7 @@ const pageContent =
 return <Page title="Product reviews">{pageContent}</Page>;
 ```
 
-## Step 2: Review details (Dom 15 minutes)
+## Step 3: Review details (Dom 15 minutes)
 
 Now that we have our index page working, we will move onto the page to display the details for each review.
 
@@ -354,7 +354,7 @@ We will then output the result of that badge into our stack.
 </Stack>
 ```
 
-## Step 3: Settings and forms (Chloe 15 minutes)
+## Step 4: Settings and forms (Chloe 15 minutes)
 
 Now that we have the index and show pages done for our reviews, we will move onto the settings page.
 
