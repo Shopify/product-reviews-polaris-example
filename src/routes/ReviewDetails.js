@@ -1,8 +1,19 @@
 import React from 'react';
 import {graphql} from 'react-apollo';
 import gql from 'graphql-tag';
+import {
+  Avatar,
+  Badge,
+  Page,
+  Layout,
+  Card,
+  Stack,
+  Thumbnail,
+  TextStyle,
+} from '@shopify/polaris';
 
 import NotFound from './NotFound';
+import Rating from '../components/Rating';
 
 function ReviewDetails(props) {
   const {
@@ -17,7 +28,59 @@ function ReviewDetails(props) {
     return <NotFound />;
   }
 
-  return <div>{review.title}</div>;
+  const badge =
+    review.status === 'published' ? (
+      <Badge status="success">Published</Badge>
+    ) : (
+      <Badge status="attention">Unpublished</Badge>
+    );
+
+  return (
+    <Page
+      title={review.title}
+      breadcrumbs={[{content: 'All reviews', url: '/'}]}
+    >
+      <Layout>
+        <Layout.Section>
+          <Card title="Review" sectioned>
+            <Stack vertical>
+              <Stack alignment="center">
+                <Avatar customer name={review.customer.name} />
+                <Stack.Item fill>
+                  <p>{review.customer.name}</p>
+                </Stack.Item>
+                {badge}
+              </Stack>
+              <Rating value={review.rating} />
+              <p>{review.content}</p>
+            </Stack>
+          </Card>
+        </Layout.Section>
+        <Layout.Section secondary>
+          <Card>
+            <Card.Section>
+              <Stack alignment="center" distribution="equalSpacing">
+                <Stack alignment="center">
+                  <Thumbnail
+                    source="https://cdn.shopify.com/s/files/1/1602/3257/products/paste-prod_thumb.jpg"
+                    alt=""
+                    size="medium"
+                  />
+                  <TextStyle variation="strong">
+                    {review.product.name}
+                  </TextStyle>
+                </Stack>
+                <Stack>
+                  <Rating value={review.product.averageRating} />
+                  <p>{review.product.reviewCount} reviews</p>
+                </Stack>
+              </Stack>
+            </Card.Section>
+          </Card>
+        </Layout.Section>
+      </Layout>
+    </Page>
+  );
 }
 
 export default graphql(
