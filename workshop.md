@@ -11,7 +11,7 @@
 
 * Style guide
 * Guidelines
-* Component reference
+* Components
 * What’s new
 * Examples
 
@@ -41,35 +41,77 @@ At the end of this workshop you will have built something that looks like this.
 
 `git clone git@github.com:Shopify/product-reviews-polaris-example.git`
 
-First we need to install the Polaris React package from npm.
+Now change into the new directory we just cloned
 
-`npm install --save @shopify/polaris`
+`cd product-reviews-polaris-example`
 
-We then need to setup our main app to use Polaris.
+We will then checkout the branch for the first step of the exercise
 
-In `App.js` add the following code:
+`git checkout step1`
+
+and then we need to install all the required dependencies
+
+`npm install`
+
+Now we can run our app with
+
+`npm start`
+
+We already have some things set up for you. Let's open up `src/App.js` to take a look.
+
+You can see we have already setup a React Apollo client for GraphQL as well as React Router for managing routing between the pages we are building.
+
+So to get started, lets first import what we need from Polaris.
+
+First, we will import the styles.
 
 ```jsx
-// App.js
-import React, {Component} from 'react';
-import {AppProvider} from '@shopify/polaris';
-
-export default class App extends Component {
-  render() {
-    return (
-      <AppProvider>
-        <p>Hello world</p>
-      </AppProvider>
-    );
-  }
-}
+import '@shopify/polaris/styles.css';
 ```
+
+And then we can import the [AppProvider](https://polaris-v2.shopify.com/components/structure/app-provider) component.
+
+```jsx
+import {AppProvider} from '@shopify/polaris';
+```
+
+The `AppProvider` is required to wrap your application. It allows more global configuration to be shared throughout the Polaris components. Things like translation strings, embedded app settings, and even what link component to use under the hood.
+
+So now that we have it imported, lets wrap our application in it. We will put it around the `ApolloProvider` that is already in the file.
+
+```jsx
+<AppProvider>
+  <ApolloProvider client={client}>...</ApolloProvider>
+</AppProvider>
+```
+
+We can then configure our `AppProvider` to use the `Link` component that comes from React Router. What that will do is tell Polaris to use the React Router links for every component that renders a link. This will allow us to keep the single page app feel as we navigate our app.
+
+First lets create a custom link component that wraps the react router link.
+
+```jsx
+const CustomLinkComponent = ({children, url, ...rest}) => {
+  return (
+    <Link to={url} {...rest}>
+      {children}
+    </Link>
+  );
+};
+```
+
+Now we will pass this custom link component into our `AppProvider`
+
+```jsx
+<AppProvider linkComponent={CustomLinkComponent}>...</AppProvider>
+```
+
+Great. Now Polaris will render react router links everywhere instead to the default `<a>` tags.
+
+## Step 2: Reviews index (Chloe 15 minutes)
 
 Looking at the structure of our app we are going to be building we will be making use of the index and details structure. The index will act as the listing of reviews. Its aim will be to find the review we want to look at and navigate to see more details about the review.
 
 The show page is where the details about the review will be listed.
-
-## Step 2: Reviews index (Chloe 15 minutes)
 
 Let's start by setting up our index page. Go ahead and open up `src/routes/ReviewList.js`. You will notice we already have a GraphQL query setup to fetch the list of reviews.
 
