@@ -14,31 +14,16 @@ import {
 import ReviewListItem from '../components/ReviewListItem';
 import {settings} from '../icons';
 
-function ReviewList(props) {
-  const {
-    data: {loading, reviews},
-  } = props;
+function ReviewList({data: {loading, reviews}}) {
+  const loadingStateContent = loading ? (
+    <TextContainer>
+      <SkeletonDisplayText size="small" />
+      <SkeletonBodyText />
+    </TextContainer>
+  ) : null;
 
-  if (loading) {
-    return (
-      <Page
-        title="Product reviews"
-        secondaryActions={[
-          {icon: settings, content: 'Settings', url: '/settings'},
-        ]}
-      >
-        <Card sectioned>
-          <TextContainer>
-            <SkeletonDisplayText size="small" />
-            <SkeletonBodyText />
-          </TextContainer>
-        </Card>
-      </Page>
-    );
-  }
-
-  const pageContent =
-    reviews.length === 0 ? (
+  const emptyStateContent =
+    reviews && reviews.length === 0 ? (
       <EmptyState
         heading="You haven't received any reviews yet"
         action={{content: 'Configure settings'}}
@@ -50,16 +35,17 @@ function ReviewList(props) {
       >
         <p>Once you have received reviews they will display on this page.</p>
       </EmptyState>
-    ) : (
-      <Card>
-        <ResourceList
-          showHeader
-          resourceName={{singular: 'review', plural: 'reviews'}}
-          items={reviews}
-          renderItem={(review) => <ReviewListItem {...review} />}
-        />
-      </Card>
-    );
+    ) : null;
+
+  const reviewsIndex =
+    reviews && reviews.length > 0 ? (
+      <ResourceList
+        showHeader
+        resourceName={{singular: 'review', plural: 'reviews'}}
+        items={reviews}
+        renderItem={(review) => <ReviewListItem {...review} />}
+      />
+    ) : null;
 
   return (
     <Page
@@ -68,7 +54,11 @@ function ReviewList(props) {
         {icon: settings, content: 'Settings', url: '/settings'},
       ]}
     >
-      {pageContent}
+      <Card sectioned>
+        {loadingStateContent}
+        {emptyStateContent}
+        {reviewsIndex}
+      </Card>
     </Page>
   );
 }
