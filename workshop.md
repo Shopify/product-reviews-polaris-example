@@ -69,7 +69,7 @@ First, we will import the styles.
 import '@shopify/polaris/styles.css';
 ```
 
-And then we can import the [AppProvider](https://polaris-v2.shopify.com/components/structure/app-provider) component.
+And then we can import the [AppProvider](https://polaris.shopify.com/components/structure/app-provider) component.
 
 ```jsx
 import {AppProvider} from '@shopify/polaris';
@@ -113,7 +113,7 @@ I will hand it over to Chloe now as she walks you through setting up the review 
 
 ## Step 2: Reviews index (Chloe)
 
-`git checkout step2`
+If you need to catch up on step one, go ahead and run `git stash && git checkout step2` in your terminal.
 
 Go ahead and open up `src/routes/ReviewList.js`. You will notice we already have a GraphQL query setup to fetch the list of reviews.
 
@@ -121,134 +121,142 @@ Let's start building out the UI of this page using Polaris.
 
 ### Page
 
-We will start with the [Page]() component. The page component should wrap each page in your app in. It accepts a title prop that you can use to give the page a title.
+We start with just a simple [Page](https://polaris.shopify.com/components/structure/page) component. The page component should wrap each page in your app.
+
+Below our dependency imports, you'll notice we've imported the page component from Shopify Polaris.
 
 ```jsx
-<Page title="Product reviews" />
+import React from 'react';
+import {graphql} from 'react-apollo';
+import gql from 'graphql-tag';
+
+import {Page} from '@shopify/polaris';
 ```
 
-The Page component also accepts a list of secondary actions. We want to add one that will link to our settings page.
-
-We have already included a settings icon you can use for this, so let's import it.
+Then we've got a functional React component called `ReviewsList` that returns a page component.
 
 ```jsx
+function ReviewList({data: {loading, reviews}}) {
+  return (
+    <Page title="Product reviews">{/* Our page content will go here. */}</Page>
+  );
+}
+```
+
+Finally, there's a GraphQL query which is called with the ReviewsList component. This injects a `data` prop that gives us an array of reviews and loading boolean that tells whether or not we're still fetching the reviews.
+
+```jsx
+export default graphql(gql`
+  query ReviewsQuery {
+    reviews {
+      id
+      title
+      status
+      date
+      customer {
+        name
+      }
+      product {
+        name
+      }
+    }
+  }
+`)(ReviewList);
+```
+
+The page component requires a `title` prop, which accepts a string to give the page a title. There are a number of optional props for the page component as well. One of those optional props is a list of secondary actions. Let's go over to the [style guide](https://polaris.shopify.com/components/structure/page) to explore what the `secondaryActions` prop accepts as a value. We want to add an action that will link to the settings page we will build a bit later.
+
+We have included a settings icon you can use. Let's import it below our Polaris component import.
+
+```jsx
+import {Page} from '@shopify/polaris';
+
 import {settings} from '../icons';
 ```
 
-And then use it in our Page component with
+Add a `secondaryActions` prop to the page component, passing in an array with an object that will map to a button below our page title. The actions this prop takes can have a lot of different properties, but we will only give our settings action an icon, content, and url.
 
 ```jsx
 <Page
   title="Product reviews"
   secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}]}
-/>
+>
+  {/* Our page content will go here. */}
+</Page>
 ```
 
 ### Card
 
-We will then add a Card component inside our Page. Cards are used to group similar concepts and tasks together to make Shopify easier for merchants to scan, read, and get things done.
+Now we will start adding content to our page. The `Card` component is one you'll use most in most of your app's views. Cards are used to group similar concepts and tasks together to make Shopify easier for merchants to scan, read, and get things done.
+
+We'll need to add the `Card` to our Polaris component import first.
 
 ```jsx
-<Page
-  title="Product reviews"
-  secondaryActions={[
-    {icon: settings, content: 'Settings', url: '/settings'},
-  ]}
->
-  <Card sectioned>
-</Page>
+import {Page, Card} from '@shopify/polaris';
 ```
 
-When building a new view for your application you should always consider all the different states for your data. Loading, empty, some and many.
-
-### Loading state
-
-We will start with the loading state. This is what will be shown as the network request is running to fetch the data for our view through GraphQL. Polaris comes with a set of skeleton content components that can be used to signify to the user that data is currently being fetched.
-
-Import the components you need from Polaris and put them inside our Card component we added.
+Next let's add a Card component as a child of `Page`.
 
 ```jsx
 <Page
   title="Product reviews"
   secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}]}
 >
+  <Card sectioned>{/* Our reviews list will go here. */}</Card>
+</Page>
+```
+
+When building a new view for your application you should always consider the different states your page will have based on the availability and quantity of the data being presented: loading, empty, some, and many.
+
+### Loading state
+
+We will start with the loading state. This is what will be shown while the network request fetches the review data through GraphQL. Polaris comes with a set of skeleton content components that can be used to communicate to the merchant that data is currently being fetched.
+
+Let's add the components we need to our Polaris component import.
+
+```jsx
+import {Page, Card, TextContainer, SkeletonDisplayText, SkeletonBodyText} from @shopify/polaris;
+```
+
+Now we will create a variable to hold the content of our loading state. We wrap the skeleton components in a text container in order to give them vertical spacing like we would real text. We are going to use the `loading` prop that is passed into our component to determine whether or not we should show skeleton content.
+
+```jsx
+const loadingStatePageContent = loading ? (
   <Card sectioned>
     <TextContainer>
       <SkeletonDisplayText size="small" />
       <SkeletonBodyText />
     </TextContainer>
   </Card>
-</Page>
+) : null;
 ```
 
-You will now see the skeleton content animate on the screen to show it is loading.
-
-We are going to use the `loading` prop that is passed into our component to trigger whether we should show the skeleton content.
+Now we can place the loading state content inside of our page.
 
 ```jsx
-if (loading) {
-  return (
-    <Page
-      title="Product reviews"
-      secondaryActions={[
-        {icon: settings, content: 'Settings', url: '/settings'},
-      ]}
-    >
-      <Card sectioned>
-        <TextContainer>
-          <SkeletonDisplayText size="small" />
-          <SkeletonBodyText />
-        </TextContainer>
-      </Card>
-    </Page>
-  );
-}
+<Page
+  title="Product reviews"
+  secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}]}
+>
+  {loadingStateContent}
+</Page>
 ```
 
 ### Empty state
 
-Next, we will build out our empty state. This is what will be displayed when there are no reviews saved yet. For this we will use the Polaris `EmptyState` component.
+Next, we will build out our page's empty state using the Polaris `EmptyState` component. This is what will be displayed when there are no reviews yet.
+
+Let's add the empty state component to our Polaris component import.
 
 ```jsx
-<EmptyState
-  heading="You haven't received any reviews yet"
-  action={{content: 'Configure settings'}}
-  secondaryAction={{
-    content: 'Learn more',
-    url: 'https://help.shopify.com',
-  }}
-  image="/review-empty-state.svg"
->
-  <p>Once you have received reviews they will display on this page.</p>
-</EmptyState>
+import {Page, Card, TextContainer, SkeletonDisplayText, SkeletonBodyText, EmptyState} from @shopify/polaris;
 ```
 
-### Resource list
-
-Now that we have our loading and empty states covered we will now build out the list of reviews. For this we are going to use the `ResourceList` component from Polaris. The Resource List displays a collection of objects to allow a user to find the one they want and navigate to see more details about it. Because every type of resource is different and requires different information to be shown, we allow you to customize the display of each item in the list by using a custom ResourceListItem. For this example we have already created a new component called `ReviewListItem` that you can use.
-
-First we will import our custom component.
+Then we'll create a variable to store the content of the empty state. We will use the length of the `reviews` array we receive from the GraphQL query to decide whether or not to show the empty state.
 
 ```jsx
-import ReviewListItem from '../components/ReviewListItem';
-```
-
-And then we will create our new Resource List using that custom item.
-
-```jsx
-<ResourceList
-  showHeader
-  resourceName={{singular: 'review', plural: 'reviews'}}
-  items={reviews}
-  renderItem={(review) => <ReviewListItem {...review} />}
-/>
-```
-
-Hooking it all together we are going to use the length of the `reviews` array we receive from the GraphQL query to decide whether to show the empty state or the resource list.
-
-```jsx
-const pageContent =
-  reviews.length === 0 ? (
+const emptyStateContent =
+  reviews && reviews.length === 0 ? (
     <EmptyState
       heading="You haven't received any reviews yet"
       action={{content: 'Configure settings'}}
@@ -260,8 +268,50 @@ const pageContent =
     >
       <p>Once you have received reviews they will display on this page.</p>
     </EmptyState>
-  ) : (
-    <Card>
+  ) : null;
+```
+
+Now we can place the empty state content inside of our page.
+
+```jsx
+<Page
+  title="Product reviews"
+  secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}]}
+>
+  {loadingStateContent}
+  {emptyStateContent}
+</Page>
+```
+
+Let's look at our page now that we've handled the case of a store without reviews. You can see that this page is helpful for merchants to see that they don't have reviews yet, but that this is where they can find them once they do. Though it's not a required prop, the `action` we've given to the empty state component gives merchants a relevant, meaningful next step they can take in the meantime.
+
+### Resource list
+
+Now that we have our loading and empty states covered, let's build out the list of reviews. For this we are going to use the Polaris `ResourceList` component. `ResourceList` displays the key details of a collection of resources (reviews in this case) that allow a merchant to find, select, take bulk action on, or navigate to see more details about each resource. Because every type of resource is different and requires different information to be shown, we allow you to customize the display of each item in the list by using a custom component instead of the `ResourceList.Item` subcomponent. For this example we have already created a new component called `ReviewListItem` that you can use.
+
+Let's add `ResourceList` to our Polaris component import. Then between the Polaris component import and the settings icon import, let's import our custom `ReviewListItem`.
+
+```jsx
+import {Page, Card, TextContainer, SkeletonDisplayText, SkeletonBodyText, EmptyState, ResourceList} from @shopify/polaris;
+
+import ReviewListItem from '../components/ReviewListItem';
+
+import {settings} from '../icons';
+```
+
+Now create a variable to store our review list content. We'll use the length of the array of reviews we receive from GraphQL to determine whether or not we render the reviews list. We'll use a sectioned card component just like in a our loading state, and add a resource list as its child.
+
+Let's take a look at the style guide to explore what props resource lists accept and require.
+
+* The `showHeader` prop optional and takes a boolean and toggles whether or not a heading with a count of the list items is shown.
+* The `resourceName` prop is also optional. It takes an object where we can specify the singular and plural names of the component should use when referencing the resource in places like the heading. If we leave this blank, it will just default to calling them items. We will need to use the resource list's `renderItem` prop so that each review will be rendered by our custom item component.
+* The `renderItem` prop is a callback used by the resource list to map out the array of reviews.
+* The `items` prop is required as well and takes an array of resource list item objects. This is where we'll pass in the array of reviews.
+
+```jsx
+const reviewsIndex =
+  reviews && reviews.length > 0 ? (
+    <Card sectioned>
       <ResourceList
         showHeader
         resourceName={{singular: 'review', plural: 'reviews'}}
@@ -269,21 +319,116 @@ const pageContent =
         renderItem={(review) => <ReviewListItem {...review} />}
       />
     </Card>
-  );
+  ) : null;
+```
 
+Now we can add the reviews list as the last child of our page component.
+
+```jsx
+<Page
+  title="Product reviews"
+  secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}]}
+>
+  {loadingStateContent}
+  {emptyStateContent}
+  {reviewsIndex}
+</Page>
+```
+
+Finally, our reviews list view is complete! Your code should look something like this.
+
+```jsx
 return (
-  <Page
-    title="Product reviews"
-    secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}]}
-  >
-    {pageContent}
-  </Page>
+  import {graphql} from 'react-apollo';
+import gql from 'graphql-tag';
+import {
+  Page,
+  EmptyState,
+  Card,
+  ResourceList,
+  SkeletonBodyText,
+  SkeletonDisplayText,
+  TextContainer,
+} from '@shopify/polaris';
+
+import ReviewListItem from '../components/ReviewListItem';
+import {settings} from '../icons';
+
+function ReviewList({data: {loading, reviews}}) {
+  const loadingStateContent = loading ? (
+    <Card sectioned>
+      <TextContainer>
+      <SkeletonDisplayText size="small" />
+      <SkeletonBodyText />
+    </TextContainer>
+    </Card>
+  ) : null;
+
+  const emptyStateContent =
+    reviews && reviews.length === 0 ? (
+      <EmptyState
+        heading="You haven't received any reviews yet"
+        action={{content: 'Configure settings'}}
+        secondaryAction={{
+          content: 'Learn more',
+          url: 'https://help.shopify.com',
+        }}
+        image="/review-empty-state.svg"
+      >
+        <p>Once you have received reviews they will display on this page.</p>
+      </EmptyState>
+    ) : null;
+
+  const reviewsIndex =
+    reviews && reviews.length > 0 ? (
+      <Card sectioned>
+        <ResourceList
+          showHeader
+          resourceName={{singular: 'review', plural: 'reviews'}}
+          items={reviews}
+          renderItem={(review) => <ReviewListItem {...review} />}
+        />
+      </Card>
+    ) : null;
+
+  return (
+    <Page
+      title="Product reviews"
+      secondaryActions={[
+        {icon: settings, content: 'Settings', url: '/settings'},
+      ]}
+    >
+      {emptyStateContent}
+      {loadingStateContent}
+      {reviewsIndex}
+    </Page>
+  );
+}
+
+export default graphql(gql`
+  query ReviewsQuery {
+    reviews {
+      id
+      title
+      status
+      date
+      customer {
+        name
+      }
+      product {
+        name
+      }
+    }
+  }
+`)(ReviewList);
 );
 ```
 
+Now Dom will walk us through our third step: building out the review detail view that each review in our list links to.
+
 ## Step 3: Review details (Dom)
 
-`git checkout step3`
+If you need to catch up on step two, run `git stash && git checkout step3` in your terminal.
 
 Now that we have our index page working, we will move onto the page to display the details for each review.
 
@@ -427,51 +572,105 @@ Here you will see we are using the stack again for layout, a thumbnail to displa
 
 ## Step 4: Settings and forms (Chloe)
 
-`git checkout step4`
+If you need to catch up on step three, run `git stash && git checkout step4` in your terminal.
 
-Now that we have the index and show pages done for our reviews, we will move onto the settings page.
+Now that we have the index and show pages done for our reviews, let's build the settings page of our app.
 
 ### Annotated layout
 
-Much like we used the `Layout` component on the show page, we will also use it here. Only this time we will be using the `Layout.AnnotatedSection` sub-component. An annotated section is used to give a title and description to a section of content. This is useful in settings pages where you need to give more context about what the merchant is changing.
+Let's open up `src/routes/Settings.js`. Form views tend to get pretty complex, so to save time and allow for a more detailed walk through, we have built a fairly complete starting point for the settings view. Let's dive in and make sure we understand the set up.
 
-Open up `src/routes/Settings.js` and put the following inside the `Page` component.
+We've imported a few components from Polaris. We've got a React component class with an initial form state and some event handlers for our form fields. One thing you may not recognize is the `getDerivedStateFromProps` method. Instead of _manually_ grabbing the initial state of the merchant's settings from the data we receive as props through our GraphQL query, we making use of this brand new component lifecycle method made available from the 16.3 release of React and onward.
 
 ```jsx
-<Layout>
-  <Layout.AnnotatedSection
-    title="Auto publish"
-    description="Automatically check new reviews for spam and then publish them."
-  >
-    <Card sectioned />
-  </Layout.AnnotatedSection>
-  <Layout.AnnotatedSection
-    title="Email settings"
-    description="Choose if you want to receive email notifications for each review."
-  >
-    <Card sectioned />
-  </Layout.AnnotatedSection>
-</Layout>
+  static getDerivedStateFromProps({settingsQuery}) {
+    if (settingsQuery.loading) {
+      return null;
+    }
+
+    const {
+      settings: {autoPublish, email, emailNotifications},
+    } = settingsQuery;
+
+    return {autoPublish, email, emailNotifications};
+  }
 ```
 
-### Building a form
+This method gives you the component's incoming props as its first parameter and the component's previous state as its second parameter (not used here). We deconstruct the incoming props, then check to see if we're still loading the data. If we're not loading, we can safely return the data we requested through GraphQL at the bottom of the file. The object we return gets automatically merged into the component's state, which we initialized with the same properties.
 
-Our settings page is really going to act as one large form where we will take input from the merchant about their settings and save it.
+Our settings page is going to act as one large form, where we will take input from the merchant about their settings and save it.
 
-First we will need to wrap our page in the `Form` component from Polaris. This will be used to handle the submission. Since there is already a form submission handler function written for us, we just need to hook them up.
+Our page is wrapped in the Polaris `Form` component, which will handle the form's submission. We do this instead of passing the submit handler to the save button's `onClick` prop.
 
 ```jsx
 <Form onSubmit={this.handleFormSubmit}>
-  <Page
-    title="Settings"
-    breadcrumbs={[{content: 'Product reviews', url: '/'}]}
-  />
+  <Page title="Settings" breadcrumbs={[{content: 'Product reviews', url: '/'}]}>
+    {/* page layout content */}
+  </Page>
 </Form>
 ```
 
+Next, we've handled the loading state of our the view. We use the `Layout` component much like we did in the show page. Only this time, we us the `Layout.AnnotatedSection` subcomponent. An annotated section is used to give a title and description to a section of content. This is useful in settings pages where you need to give more context about what the merchant is changing.
+
+We fetch the merchant's current settings through the GraphQL query built at the bottom of this file. Calling the React Apollo `compose` higher order function with our `Settings` component means we can expect to receive `data` as a prop. Just like we did with our reviews list, we store the loading state content in a variable and use the `data` prop's loading property to determine whether or not to show skeleton content.
+
+```jsx
+const loadingStateContent = loading ? (
+  <Layout>
+    <Layout.AnnotatedSection
+      title="Auto publish"
+      description="Automatically check new reviews for spam and then publish them."
+    >
+      <Card sectioned>
+        <TextContainer>
+          <SkeletonDisplayText size="small" />
+          <SkeletonBodyText />
+        </TextContainer>
+      </Card>
+    </Layout.AnnotatedSection>
+    <Layout.AnnotatedSection
+      title="Email settings"
+      description="Choose if you want to receive email notifications for each review."
+    >
+      <Card sectioned>
+        <TextContainer>
+          <SkeletonDisplayText size="small" />
+          <SkeletonBodyText />
+        </TextContainer>
+      </Card>
+    </Layout.AnnotatedSection>
+  </Layout>
+) : null;
+```
+
+Now that we're familiar with the set up of this view, let's dig into building out the fields of our form.
+
+### Building a form
+
 ### Choice list
 
-The first thing we need to add to the form is a way for the merchant to enable and disable auto publishing reviews that are submitted. To do that we are going to use the `ChoiceList` component. This component displays a list of checkboxes or radio buttons to get a choice from the merchant.
+Next, lets build the auto publish field. This field allows merchants to enable and disable auto publishing of reviews as they are submitted by their customers. To do that, we will use the Polaris choice list component. Choice lists display a list of checkboxes or radio buttons to gather choice input. Let's explore the props required by choice lists in the [style guide](https://polaris.shopify.com/components/forms/choice-list).
+
+Add `ChoiceList` to the Polaris component import at the top of the file.
+
+```jsx
+import {
+  Form,
+  Page,
+  Layout,
+  Card,
+  TextContainer,
+  SkeletonBodyText,
+  SkeletonDisplayText,
+  ChoiceList,
+} from '@shopify/polaris';
+```
+
+```jsx
+const autoPublishSelected = autoPublish ? ['enabled'] : ['disabled'];
+```
+
+Use the choice list to replace the comment in the card of the first annotated section of the our `settingsFormContent` variable.
 
 ```jsx
 <ChoiceList
@@ -496,58 +695,111 @@ The first thing we need to add to the form is a way for the merchant to enable a
 
 ### Displaying errors
 
-Next we need the fields for whether the merchant wants to be notified by email when new reviews are submitted. For this we will need both a `Checkbox` and `TextField` component.
-
-We will use another stack to get the correct spacing between them.
+Next we need the fields that allow a merchant to choose whether or not to be notified by email when new reviews are submitted. For this we will need add both a `Checkbox` and a `TextField` to the Polaris component import. We will also use the Polaris `FormLayout` component to get the correct spacing between the checkbox and the text field.
 
 ```jsx
-<Card sectioned>
-  <Stack vertical>
-    <TextField
-      value={email}
-      label="Email"
-      type="email"
-      error={emailError}
-      onChange={this.handleEmailChange}
-    />
-    <Checkbox
-      checked={emailNotifications}
-      label="Send me an email when a review is submitted."
-      onChange={this.handleEmailNotificationChange}
-    />
-  </Stack>
-</Card>
+import {
+  Form,
+  Page,
+  Layout,
+  Card,
+  TextContainer,
+  SkeletonBodyText,
+  SkeletonDisplayText,
+  ChoiceList,
+  FormLayout,
+  Checkbox,
+  TextField,
+} from '@shopify/polaris';
 ```
 
-Now we want to show an error if the merchant selects they want to receive email notifications but hasn't yet put in an email address.
+Use the form layout below to replace the comment in the card of the second annotated section of our `settingsFormContent` variable. The text field's `value` prop and the checkbox's `checked` prop values come from our component's state.
+
+```jsx
+<FormLayout>
+  <TextField
+    value={email}
+    label="Email"
+    type="email"
+    error={emailError}
+    onChange={this.handleEmailChange}
+  />
+  <Checkbox
+    checked={emailNotifications}
+    label="Send me an email when a review is submitted."
+    onChange={this.handleEmailNotificationChange}
+  />
+</FormLayout>
+```
+
+The text field's `error` prop boolean value comes from state as well. Let's take a look at the `handleEmailNotificationChange` method, which we give to the checkbox's `onChange` prop, in order to understand how we determine whether to show an error.
 
 ```jsx
 @autobind
-handleEmailNotificationChange(value) {
+handleEmailNotificationChange(receiveNotifications) {
   const {email} = this.state;
   const emailError =
-    value && email === ''
+    receiveNotifications && email === ''
       ? 'Enter an email to get review notifications.'
       : undefined;
   this.setState({emailNotifications: value, emailError});
 }
 ```
 
-### Form submission
-
-Finally, we need to add a submit button to be able to actually submit the form. For this we will use the `PageActions` component. We will add a new `Layout.Section` below our annotated sections and put the page actions within it.
+We add error text to the state if the merchant selects that they would like to receive email notifications, but hasn't yet input an email address. In the `handleSubmit` method, we prevent the form from submitting if there's an email error.
 
 ```jsx
-<Layout.Section>
-  <PageActions
+@autobind
+handleFormSubmit() {
+  const {updateSettingsMutation} = this.props;
+  const {autoPublish, emailNotifications, email, emailError} = this.state;
+
+  if (emailError) {
+    return;
+  }
+
+  updateSettingsMutation({
+    variables: {
+      autoPublish,
+      emailNotifications,
+      email,
+    },
+  });
+}
+```
+
+### Form submission
+
+Finally, we need to add a submit button to be able to actually submit the form. For this we _could_ use the the Polaris `PageActions` component, but it is best practice to use the page component's `primaryAction` prop. This will work in conjunction with the context bar that rests above your app when it is rendered inside of the Shopify admin. The context bar signifies to the merchant that they have unsaved changes on the page that need to be saved.
+
+```jsx
+<Form>
+  <Page
+    title="Settings"
+    breadcrumbs={[{content: 'Product reviews', url: '/'}]}
     primaryAction={{
       content: 'Save',
       submit: true,
+      disabled: !emailError,
     }}
-  />
-</Layout.Section>
+  >
+    {/* Page content... */}
+  </Page>
+</Form>
 ```
 
-And that's it. We now have a great start on our app. Feel free to continue exploring the rest of the code there, try out some new components, or even build some of your own.
+## Closing thoughts
 
-## Closing thoughts / QA (Dom)
+And that's it. We now have a great start for our product review app. Feel free to continue exploring the rest of the code there, try out some new components, or even build some of your own.
+
+### Additional resources
+
+* [Partners Slack Group](https://ecommtalk.com/subscribe/)
+* [Polaris Github repository](https://github.com/Shopify/polaris)
+* [Webinar recording: Building great app interfaces with Polaris](https://www.youtube.com/watch?v=6hiGCw-dY9M)
+
+Thank you!
+
+Let's move on to the question and answers session.
+
+QA (Dom)
