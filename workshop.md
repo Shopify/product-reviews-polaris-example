@@ -37,6 +37,8 @@ At the end of this workshop you will have built something that looks like this.
 
 ![Settings page screenshot](public/images/settings-screenshot.png)
 
+[Live demo](https://polaris-product-reviews.glitch.me/)
+
 ## Step 1: Setting up your app (Dom)
 
 `git clone git@github.com:Shopify/product-reviews-polaris-example.git`
@@ -49,7 +51,9 @@ We will then checkout the branch for the first step of the exercise
 
 `git checkout step1`
 
-and then we need to install all the required dependencies
+We can now open up the project in your code editor. We will be using Microsoft's VSCode, but you are free to use whichever editor you prefer.
+
+Next we need to install all the required dependencies
 
 `npm install`
 
