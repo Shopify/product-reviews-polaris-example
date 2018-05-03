@@ -16,10 +16,12 @@ import {settings} from '../icons';
 
 function ReviewList({data: {loading, reviews}}) {
   const loadingStateContent = loading ? (
-    <TextContainer>
-      <SkeletonDisplayText size="small" />
-      <SkeletonBodyText />
-    </TextContainer>
+    <Card.sectioned>
+      <TextContainer>
+        <SkeletonDisplayText size="small" />
+        <SkeletonBodyText />
+      </TextContainer>
+    </Card.sectioned>
   ) : null;
 
   const emptyStateContent =
@@ -39,12 +41,14 @@ function ReviewList({data: {loading, reviews}}) {
 
   const reviewsIndex =
     reviews && reviews.length > 0 ? (
-      <ResourceList
-        showHeader
-        resourceName={{singular: 'review', plural: 'reviews'}}
-        items={reviews}
-        renderItem={(review) => <ReviewListItem {...review} />}
-      />
+      <Card sectioned>
+        <ResourceList
+          showHeader
+          resourceName={{singular: 'review', plural: 'reviews'}}
+          items={reviews}
+          renderItem={(review) => <ReviewListItem {...review} />}
+        />
+      </Card>
     ) : null;
 
   return (
@@ -54,11 +58,9 @@ function ReviewList({data: {loading, reviews}}) {
         {icon: settings, content: 'Settings', url: '/settings'},
       ]}
     >
+      {loadingStateContent}
       {emptyStateContent}
-      <Card sectioned>
-        {loadingStateContent}
-        {reviewsIndex}
-      </Card>
+      {reviewsIndex}
     </Page>
   );
 }
