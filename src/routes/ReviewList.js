@@ -15,13 +15,22 @@ import ReviewListItem from '../components/ReviewListItem';
 import {settings} from '../icons';
 
 function ReviewList({data: {loading, reviews}}) {
+  /* Comment or uncomment the next two lines to toggle the loading state */
+  // loading = true;
+  // reviews = null;
+
+  /* Comment or uncomment the next line to toggle the empty state */
+  // reviews = [];
+
   const loadingStateContent = loading ? (
-    <Card.sectioned>
+    <Card sectioned>
       <TextContainer>
-        <SkeletonDisplayText size="small" />
-        <SkeletonBodyText />
+        {/* Go to https://polaris.shopify.com to view the style guide.*/
+        /* Use the search bar (top right) to find "skeleton" components. */
+        /* Look at the different examples provided by selecting from the example menu at the top of the component pages. */
+        /* Paste some skeleton content from the component playground here  */}
       </TextContainer>
-    </Card.sectioned>
+    </Card>
   ) : null;
 
   const emptyStateContent =
@@ -41,7 +50,7 @@ function ReviewList({data: {loading, reviews}}) {
 
   const reviewsIndex =
     reviews && reviews.length > 0 ? (
-      <Card sectioned>
+      <Card>
         <ResourceList
           showHeader
           resourceName={{singular: 'review', plural: 'reviews'}}
@@ -58,8 +67,8 @@ function ReviewList({data: {loading, reviews}}) {
         {icon: settings, content: 'Settings', url: '/settings'},
       ]}
     >
-      {loadingStateContent}
       {emptyStateContent}
+      {loadingStateContent}
       {reviewsIndex}
     </Page>
   );

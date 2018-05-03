@@ -10,6 +10,7 @@
     "func-style": "off",
     "no-console": "off",
     "no-undefined": "off",
+    "no-param-reassign": "off",
     "no-process-env": "off",
     "no-warning-comments": "off",
     "no-negated-condition": "off",
