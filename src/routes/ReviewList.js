@@ -54,9 +54,9 @@ function ReviewList({data: {loading, reviews}}) {
         {icon: settings, content: 'Settings', url: '/settings'},
       ]}
     >
+      {emptyStateContent}
       <Card sectioned>
         {loadingStateContent}
-        {emptyStateContent}
         {reviewsIndex}
       </Card>
     </Page>
