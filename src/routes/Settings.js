@@ -3,6 +3,16 @@ import {graphql, compose} from 'react-apollo';
 import gql from 'graphql-tag';
 import {autobind} from '@shopify/javascript-utilities/decorators';
 
+import {
+  Form,
+  Page,
+  Layout,
+  Card,
+  TextContainer,
+  SkeletonBodyText,
+  SkeletonDisplayText,
+} from '@shopify/polaris';
+
 class Settings extends React.Component {
   state = {
     autoPublish: false,
@@ -27,11 +37,67 @@ class Settings extends React.Component {
     const {loading} = this.props;
     const {autoPublish, email, emailNotifications, emailError} = this.state;
 
-    if (loading) {
-      return <div>Loading...</div>;
-    }
+    const loadingStateContent = loading ? (
+      <Layout>
+        <Layout.AnnotatedSection
+          title="Auto publish"
+          description="Automatically check new reviews for spam and then publish them."
+        >
+          <Card sectioned>
+            <TextContainer>
+              <SkeletonDisplayText size="small" />
+              <SkeletonBodyText />
+            </TextContainer>
+          </Card>
+        </Layout.AnnotatedSection>
+        <Layout.AnnotatedSection
+          title="Email settings"
+          description="Choose if you want to receive email notifications for each review."
+        >
+          <Card sectioned>
+            <TextContainer>
+              <SkeletonDisplayText size="small" />
+              <SkeletonBodyText />
+            </TextContainer>
+          </Card>
+        </Layout.AnnotatedSection>
+      </Layout>
+    ) : null;
 
-    return <div>Settings content.</div>;
+    const autoPublishSelected = autoPublish ? ['enabled'] : ['disabled'];
+
+    const settingsFormContent = !loading ? (
+      <Layout>
+        <Layout.AnnotatedSection
+          title="Auto publish"
+          description="Automatically check new reviews for spam and then publish them."
+        >
+          <Card sectioned>
+            {/* The choice list for the auto publish form field goes here */}
+          </Card>
+        </Layout.AnnotatedSection>
+        <Layout.AnnotatedSection
+          title="Email settings"
+          description="Choose if you want to receive email notifications for each review."
+        >
+          <Card sectioned>
+            {/* The email notification form field goes here */}
+          </Card>;
+        </Layout.AnnotatedSection>
+      </Layout>
+    ) : null;
+
+    return (
+      <Form onSubmit={this.handleFormSubmit}>
+        <Page
+          title="Settings"
+          breadcrumbs={[{content: 'Product reviews', url: '/'}]}
+        >
+          {loadingStateContent}
+          {settingsFormContent}
+        </Page>
+      </Form>
+    );
   }
 
   @autobind
@@ -41,13 +107,13 @@ class Settings extends React.Component {
   }
 
   @autobind
-  handleEmailNotificationChange(value) {
+  handleEmailNotificationChange(receiveNotifications) {
     const {email} = this.state;
     const emailError =
-      value && email === ''
+      receiveNotifications && email === ''
         ? 'Enter an email to get review notifications.'
-        : false;
-    this.setState({emailNotifications: value, emailError});
+        : undefined;
+    this.setState({emailNotifications: receiveNotifications, emailError});
   }
 
   @autobind
