@@ -16,8 +16,8 @@ import {settings} from '../icons';
 
 function ReviewList({data: {loading, reviews}}) {
   /* Comment or uncomment the next two lines to toggle the loading state */
-  loading = true;
-  reviews = null;
+  // loading = true;
+  // reviews = null;
 
   /* Comment or uncomment the next line to toggle the empty state */
   // reviews = [];
@@ -30,9 +30,6 @@ function ReviewList({data: {loading, reviews}}) {
         {/* Use the search bar (top right) to find "skeleton" components. */}
         {/* Look at the different examples provided by selecting from the example menu at the top of the component pages. */}
         {/* Use skeleton components to replace these comments! */}
-        <SkeletonDisplayText size="small" />
-        <SkeletonBodyText />
-        <SkeletonBodyText />
       </TextContainer>
     </Card>
   ) : null;
@@ -42,7 +39,6 @@ function ReviewList({data: {loading, reviews}}) {
       <EmptyState
         heading="You haven't received any reviews yet"
         // add an "action" prop that links to the '/settings' route
-        action={{content: 'Configure settings', url: '/settings'}}
         image="/review-empty-state.svg"
       >
         <p>Once you have received reviews they will display on this page.</p>
