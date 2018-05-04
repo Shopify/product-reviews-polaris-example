@@ -51,51 +51,23 @@ Now change into the new directory we just cloned
 
 Open up the project in your code editor. We will be using [Microsoft's VSCode](https://code.visualstudio.com/), but you are free to use whichever editor you prefer.
 
-First we need to install the app dependencies
+We will then need to install the app dependencies with npm.
 
 `npm install`
 
-Now we can run our app with
+Now we can run our app with:
 
 `npm start`
 
-We have set most of the app up for you. Let's open up `src/App.js` to take a look.
+We have setup the structure of the app up for you. We have included a simple GraphQL server with some dummy data, the React Apollo client to connect the React components with that GraphQL server, and React Router with four routes started for you.
 
-You can see we have set up a React Apollo client for GraphQL, as well as React Router for managing routing between the pages we are building.
+Looking at the folder stucture here, it may be a little overwhelming but don't worry. It isn't as complicated as it looks.
 
-We then import the styles and the [AppProvider component](https://polaris.shopify.com/components/structure/app-provider), which are required to start using Polaris in our project.
+The most important parts we will be using today are:
 
-```jsx
-import {AppProvider} from '@shopify/polaris';
-
-import '@shopify/polaris/styles.css';
-```
-
-The `AppProvider` is must wrap our application. It allows for global configuration to be shared throughout the Polaris components. Things like translation strings, embedded app settings, and even what link component to use under the hood can all be configured using the `AppProvider`.
-
-We configured our `AppProvider` to use the `Link` component that comes from React Router. This allow us to create the single page app feel as merchants navigate our app.
-
-We created a custom link component that wraps the React Router link.
-
-```jsx
-const CustomLinkComponent = ({children, url, ...rest}) => {
-  return (
-    <Link to={url} {...rest}>
-      {children}
-    </Link>
-  );
-};
-```
-
-Then pass the custom link component to the `linkComponent` prop of the `AppProvider`.
-
-```jsx
-<AppProvider linkComponent={CustomLinkComponent}>...</AppProvider>
-```
-
-Now Polaris will automatically render React Router links anywhere that an `<a>` tag would normally be rendered by Polaris components.
-
-Looking at the structure of the finished app, we will need to make use of the index and show structure. The index acts as the listing of reviews. The review index will help merchants scan and take action on their store's reviews, or navigate to the show page to see more details about an individual review.
+* `src/App.js` - This is the top level app component. This is where we initialize the React Apollo client, setup React Router and its routes, and include the `AppProvider` component from Polaris.
+* `src/routes` - This is where you will see the four routes we have setup for you. A review list route, a review details route, a settings route, and the not found route for 404s.
+* `src/components` - This is where we have the custom components we have built for our app. There are two components here. A `Rating` component used to show the number of stars a review has, and the `ReviewListItem` which we will be using to build out our resource list on the index page.
 
 I will hand it over to Chloe now, and she will walk us through the review index.
 
@@ -415,43 +387,23 @@ Now Dom will walk us through building out the review detail page that each revie
 
 ## Step 3: Review details (Dom)
 
-If you need to catch up on step two, run `git stash && git checkout step3` in your terminal.
-
 Now that we have our index page working, we will move onto the page to display the details for each review.
+
+What we want to end up with is something like this:
+
+![Show page screenshot](public/images/show-screenshot.png)
 
 ### Layout
 
-Looking at our mockup or this page we will notice it should display in two columns on larger screens. We will use the `Layout` component from Polaris to do this.
+Looking at our mockup for this page we will notice it should display in two columns on larger screens but currently our page is only a single column. We are going to use the `Layout` component from Polaris for this.
 
-Open up `src/routes/ReviewDetails.js` add a Page component with a breadcrumb and the layout inside of it.
+To do this, let's open up the style guide and search for layout.
 
-```jsx
-<Page title={review.title} breadcrumbs={[{content: 'All reviews', url: '/'}]}>
-  <Layout />
-</Page>
-```
+We will see there is an example for two column layouts. Let's copy that example and move it into our show page.
 
-Inside that new layout we will add two sections. We add the `secondary` prop on the second one to signify that it should be the smaller of the two columns.
+The `Layout` should go inside the `Page` component, but wrap our cards and content.
 
-```jsx
-<Layout>
-  <Layout.Section />
-  <Layout.Section secondary />
-</Layout>
-```
-
-Inside those sections we will add a card to each which is where we will add our content for the page.
-
-```jsx
-<Layout>
-  <Layout.Section>
-    <Card title="Review" sectioned />
-  </Layout.Section>
-  <Layout.Section secondary>
-    <Card sectioned />
-  </Layout.Section>
-</Layout>
-```
+You will notice that the `Layout` also has a subcomponent for `Section`. This section component takes a `secondary` prop that we will use on the second column.
 
 ### Stack
 
@@ -459,60 +411,17 @@ So where the `Layout` component works really well for that overall page layout, 
 
 Stacks can be used to align and space elements in a way that will wrap responsively based on the content size and the space available.
 
-We are going to use two stacks, one nested inside the other to create the following layout.
+If we uncomment the content within the reviews card, we will see it doesn't have any layout right now.
+
+This is a visualization of the layout we want to accomplish.
 
 ![Diagram of stack item boundaries](public/images/stack-xray.png)
 
-We will start with the vertical stack.
+First we will need the vertical Stack. Let's go to the style guide and look up the docs to find out how we can do that.
 
-```jsx
-<Card title="Review" sectioned>
-  <Stack vertical />
-</Card>
-```
+Now we will try wrapping all of that content in the reviews card with our vertical stack. Notice how all of the children now have consistent vertical spacing between them?
 
-Placing elements inside of this `Stack` will lay them out vertically with consistent spacing. Let's output the rating and content from the review to see how it works.
-
-```jsx
-<Card title="Review" sectioned>
-  <Stack vertical>
-    <Rating value={review.rating} />
-    <p>{review.content}</p>
-  </Stack>
-</Card>
-```
-
-We can then use a nested Stack to get the `Avatar` and customer name side by side within it. We are also going to use the alignment prop to centre the elements vertically.
-
-```jsx
-<Card title="Review" sectioned>
-  <Stack vertical>
-    <Stack alignment="center">
-      <Avatar customer name={review.customer.name} />
-      <p>{review.customer.name}</p>
-    </Stack>
-    <Rating value={review.rating} />
-    <p>{review.content}</p>
-  </Stack>
-</Card>
-```
-
-### Badge
-
-Next we want to add something to tell the merchant whether the review is published or not. We will use the `Badge` component for this. Badges are used to inform merchants about the status of something.
-
-We will want the color and content of this badge to reflect the status of the review. To do that we will use a ternary operator to switch between the two variations based on status.
-
-```jsx
-const badge =
-  review.status === 'published' ? (
-    <Badge status="success">Published</Badge>
-  ) : (
-    <Badge status="attention">Unpublished</Badge>
-  );
-```
-
-We will then output the result of that badge into our stack.
+So we are also going to use a nested stack to get the avatar, customer name and status badge to show inline. We also will want these to be vertically centered so we will look at the alignment property on stack.
 
 ```jsx
 <Stack alignment="center">
@@ -530,32 +439,164 @@ So this looks great, but you will notice the badge is right up against the custo
 </Stack.Item>
 ```
 
-Great. Now you will see the badge pushed over to the right side of the card where we want it.
+Now you will see the badge pushed over to the right side of the card where we want it.
 
-So next we are going to add the secondary card with our product information. Inside you `<Layout.Section secondary>` add the following content.
+### Badge
+
+So now the badge is in the correct place, but we will notice the color still doesn't match our mockup. Let's open up the badge in the style guide and take a look at how we can do that.
+
+We will see that the badge takes a status prop. This status can be used to apply a color to the badge. In our case we will want a `success` badge if the review is published and an `attention` status if it is unpublished.
+
+Great. We now have a fully working details page for our reviews!
+
+<details>
+<summary>Click to view the final state of the ReviewDetails.js code</summary>
 
 ```jsx
-<Card>
-  <Card.Section>
-    <Stack alignment="center" distribution="equalSpacing">
-      <Stack alignment="center">
-        <Thumbnail
-          source="https://cdn.shopify.com/s/files/1/1602/3257/products/paste-prod_thumb.jpg"
-          alt=""
-          size="medium"
-        />
-        <TextStyle variation="strong">{review.product.name}</TextStyle>
-      </Stack>
-      <Stack>
-        <Rating value={review.product.averageRating} />
-        <p>{review.product.reviewCount} reviews</p>
-      </Stack>
-    </Stack>
-  </Card.Section>
-</Card>
+import React from 'react';
+import {graphql} from 'react-apollo';
+import gql from 'graphql-tag';
+import {
+  Avatar,
+  Badge,
+  Card,
+  TextStyle,
+  Page,
+  Layout,
+  Stack,
+  Thumbnail,
+  SkeletonPage,
+  SkeletonBodyText,
+  SkeletonDisplayText,
+  TextContainer,
+} from '@shopify/polaris';
+
+import NotFound from './NotFound';
+import Rating from '../components/Rating';
+
+function ReviewDetails(props) {
+  const {
+    data: {loading, review},
+  } = props;
+
+  if (loading) {
+    return (
+      <SkeletonPage>
+        <Layout>
+          <Layout.Section>
+            <Card title="Review" sectioned>
+              <TextContainer>
+                <SkeletonDisplayText size="small" />
+                <SkeletonBodyText />
+              </TextContainer>
+            </Card>
+          </Layout.Section>
+          <Layout.Section secondary>
+            <Card sectioned>
+              <TextContainer>
+                <SkeletonDisplayText size="small" />
+                <SkeletonBodyText />
+              </TextContainer>
+            </Card>
+          </Layout.Section>
+        </Layout>
+      </SkeletonPage>
+    );
+  }
+
+  if (!review) {
+    return <NotFound />;
+  }
+
+  const badge =
+    review.status === 'published' ? (
+      <Badge status="success">Published</Badge>
+    ) : (
+      <Badge status="attention">Unpublished</Badge>
+    );
+
+  return (
+    <Page
+      title={review.title}
+      breadcrumbs={[{content: 'All reviews', url: '/'}]}
+    >
+      <Layout>
+        <Layout.Section>
+          <Card title="Review" sectioned>
+            <Stack vertical>
+              <Stack alignment="center">
+                <Avatar customer name={review.customer.name} />
+                <Stack.Item fill>
+                  <p>{review.customer.name}</p>
+                </Stack.Item>
+                {badge}
+              </Stack>
+              <Rating value={review.rating} />
+              <p>{review.content}</p>
+            </Stack>
+          </Card>
+        </Layout.Section>
+        <Layout.Section secondary>
+          <Card>
+            <Card.Section>
+              <Stack alignment="center" distribution="equalSpacing">
+                <Stack alignment="center">
+                  <Thumbnail
+                    source="https://cdn.shopify.com/s/files/1/1602/3257/products/paste-prod_thumb.jpg"
+                    alt=""
+                    size="medium"
+                  />
+                  <TextStyle variation="strong">
+                    {review.product.name}
+                  </TextStyle>
+                </Stack>
+                <Stack>
+                  <Rating value={review.product.averageRating} />
+                  <p>{review.product.reviewCount} reviews</p>
+                </Stack>
+              </Stack>
+            </Card.Section>
+          </Card>
+        </Layout.Section>
+      </Layout>
+    </Page>
+  );
+}
+
+export default graphql(
+  gql`
+    query ReviewQuery($id: Int!) {
+      review(id: $id) {
+        id
+        rating
+        title
+        content
+        status
+        date
+        customer {
+          name
+          email
+        }
+        product {
+          name
+          reviewCount
+          averageRating
+        }
+      }
+    }
+  `,
+  {
+    options: ({
+      match: {
+        params: {id},
+      },
+    }) => ({variables: {id: parseInt(id, 10)}}),
+  },
+)(ReviewDetails);
 ```
 
-Here you will see we are using the stack again for layout, a thumbnail to display the product image, reusing our custom Rating component, and utilizing the `TextStyle` component to bold the product name text.
+</details>
+<br />
 
 ## Closing thoughts
 
