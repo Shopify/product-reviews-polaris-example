@@ -127,15 +127,25 @@ function ReviewList({data: {loading, reviews}}) {
 }
 ```
 
-The page component requires a `title` prop, which accepts a string to give the page a title. There are a number of optional props the page component accepts as well. One of those optional props is a list of secondary actions. Let's head over to the [style guide](https://polaris.shopify.com/components/structure/page) to explore what the `secondaryActions` prop accepts as a value.
+The page component requires a `title` prop, which accepts a string to give the page a title.
 
-We want to add an action that will link to the settings page we've built. We have already imported a gear shaped SVG we've included in this project. We'll use that as the icon property of our secondary action.
+So far, our page looks like this
+
+![Page title screenshot](public/images/page-title-screenshot.png)
+
+There are a number of optional props the page component accepts as well. One of those optional props is a list of secondary actions. Let's head over to the [style guide](https://polaris.shopify.com/components/structure/page) to explore what the `secondaryActions` prop accepts as a value.
+
+We want to add an action that will link to the settings page we've built so our page looks something like this.
+
+![Page with secondary action screenshot](public/images/page-actions-screenshot.png)
+
+We have already imported the gear shaped SVG we've included in this project. We'll use that as the icon property of our secondary action.
 
 ```jsx
 import {settings} from '../icons';
 ```
 
-Add a `secondaryActions` prop to the page component, passing in an array with a single object that will map to a settings button below our page title. As you can see in the style guide prop explorer, secondary action objects can have a lot of different properties. We will only give our settings action an icon, content, and url.
+Add a `secondaryActions` prop to the page component. Give it an array with a single object. This array will map to a settings button below our page title. As you can see in the style guide prop explorer, secondary action objects can have a lot of different properties. We will only give our settings action an icon, content, and url.
 
 ```jsx
 <Page
@@ -154,11 +164,22 @@ Now let's dig into the content of our page. When building a new view for your ap
 
 We start with the loading state content. This is what is shown while the network request fetches the review data through GraphQL.
 
-We've wrapped the loading state content with a card component. Cards are used to group similar concepts and tasks together to make Shopify easier for merchants to scan, read, and get things done.
+![Loading state screenshot](public/images/loading-state-screenshot.png)
 
-We hold the content of our loading state in a variable that uses the `loading` property of the `data` prop to determine whether or not we should show this content. Polaris comes with a set of skeleton content components that can be used to communicate to the merchant that data is currently being fetched.
+We hold the content of our loading state in a variable that uses the `loading` property of the `data` prop to determine whether or not we should show this content.
 
-* Let's go back to the [style guide](https://polaris.shopify.com)
+We wrap the loading state content with a card component. Cards are used to group similar concepts and tasks together to make Shopify easier for merchants to scan, read, and get things done.
+
+```jsx
+const loadingStatePageContent = loading ? (
+  <Card sectioned>
+    <TextContainer>{/* Skeleton components... */}</TextContainer>
+  </Card>
+) : null;
+```
+
+Polaris comes with a set of skeleton content components that can be used to communicate to the merchant that data is currently being fetched. Let's go back to the [style guide](https://polaris.shopify.com) take a look at those components.
+
 * Use the search bar (top right) to find the "skeleton" components we've imported
 * Once you get to a skeleton component page, look at the different examples provided by selecting from the example menu at the top of the page.
 * Play with the component code in the playground and explore the props list
@@ -184,11 +205,11 @@ loading = true;
 reviews = null;
 ```
 
-![Loading state screenshot](public/images/loading-state-screenshot.png)
-
 ### Empty state
 
 Next, let's go over how to build out our page's empty state using the Polaris `EmptyState` component. This is what will be displayed when we aren't loading data but there are no reviews for the merchant's products yet.
+
+![Empty state screenshot](public/images/empty-state-screenshot.png)
 
 Let's add the empty state component to our Polaris component import.
 
@@ -233,17 +254,28 @@ Let's add an action prop to our empty state component that will link the merchan
 </EmptyState>
 ```
 
-Now we can see our empty state.
-
-![Empty state screenshot](public/images/empty-state-screenshot.png)
+Now we can see our empty state!
 
 ### Resource list
 
-The last variable we create stores the content of the list of reviews. We use the length of the array of reviews we receive from GraphQL to determine whether or not we render the reviews list. To wrap our reviews list content, we use a card component just like we did for our loading state content.
+The last variable we create stores the content of the list of reviews. We use the length of the array of reviews we receive from GraphQL to determine whether or not we render the reviews list. To wrap our reviews list content, we use a card component just like we did for our loading and empty state content.
+
+```jsx
+const reviewsIndex =
+  reviews && reviews.length > 0 ? (
+    <Card>{/* add a ResourceList of reviews here... */}</Card>
+  ) : null;
+```
 
 To build the list of reviews, we will use the Polaris `ResourceList` component. `ResourceList` displays the key details of a collection of resources (reviews in this case) that allow a merchant to find, select, take bulk action on, or navigate to see more details about each resource.
 
-Because every type of resource is different and requires different information to be shown, we allow you to customize the display of each item in the list by using a custom component instead of the `ResourceList.Item` subcomponent. For this app, we created a custom component called `ReviewListItem` and have already imported it into this file.
+![Resource list screenshot](public/images/resource-list-screenshot.png)
+
+Since every type of resource is different and requires different information to be shown, we allow you to customize the display of each item in the list by using a custom component instead of the `ResourceList.Item` subcomponent. For this app, we created a custom component called `ReviewListItem` and have already imported it into this file.
+
+```jsx
+import ReviewListItem from '../components/ReviewListItem';
+```
 
 Let's start building our index. First, place a resource list component inside of the card in the `reviewsIndex` variable.
 
@@ -258,10 +290,10 @@ const reviewsIndex =
 
 Next, let's go back to the [Polaris style guide](https://polaris.shopify.com) and search for "resource list" so we can explore what props to pass into to our resource list.
 
-* The `showHeader` prop optional and takes a boolean that toggles whether or not a heading with a count of the list items is shown.
-* The `resourceName` prop is also optional. It takes an object that specifies the singular and plural names of the resources in question so the component can use them when referencing the resources in places like the heading. If left blank, the resource list will just default to calling them items.
-* The `items` prop is required as well and takes an array of resource list item objects. We pass the resource list our array of reviews here.
-* The `renderItem` prop is a callback used by the resource list to map out the list of resources the `items` prop receives. Here is where we will instruct the component to render each review with our custom `ReviewListItem` component.
+* The `showHeader` prop is an optional boolean that toggles whether or not a heading with a count of the list items is shown.
+* The `resourceName` prop is also optional. It takes an object that specifies the singular and plural names of the resources so the component can use them when referencing the resources in places like the heading. If left blank, the resource list will just default to calling them items.
+* The `items` prop is required as well and takes an array of objects. We pass the resource list our array of review objects here.
+* The `renderItem` prop is a callback function used by the resource list to map over and render the list of resources the `items` prop receives. Here is where we will instruct the component to render each review with our custom `ReviewListItem` component.
 
 ```jsx
 const reviewsIndex =
@@ -293,7 +325,7 @@ The reviews index is the last child of our page component.
 Finally, our reviews list view is complete!
 
 <details>
-<summary>Click to view the final state of the ReviewList.js code</summary>
+<summary>Click to view the finished ReviewList.js code</summary>
 
 ```jsx
 import React from 'react';
