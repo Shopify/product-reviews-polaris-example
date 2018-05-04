@@ -61,9 +61,7 @@ Now we can run our app with:
 
 We have setup the structure of the app up for you. We have included a simple GraphQL server with some dummy data, the React Apollo client to connect the React components with that GraphQL server, and React Router with four routes started for you.
 
-Looking at the folder stucture here, it may be a little overwhelming but don't worry. It isn't as complicated as it looks.
-
-The most important parts we will be using today are:
+Looking at the folder stucture, there is a lot in here but these are the most important parts we will be using today are:
 
 * `src/App.js` - This is the top level app component. This is where we initialize the React Apollo client, setup React Router and its routes, and include the `AppProvider` component from Polaris.
 * `src/routes` - This is where you will see the four routes we have setup for you. A review list route, a review details route, a settings route, and the not found route for 404s.
@@ -446,6 +444,15 @@ Now you will see the badge pushed over to the right side of the card where we wa
 So now the badge is in the correct place, but we will notice the color still doesn't match our mockup. Let's open up the badge in the style guide and take a look at how we can do that.
 
 We will see that the badge takes a status prop. This status can be used to apply a color to the badge. In our case we will want a `success` badge if the review is published and an `attention` status if it is unpublished.
+
+```jsx
+const badge =
+  review.status === 'published' ? (
+    <Badge status="success">Published</Badge>
+  ) : (
+    <Badge status="attention">Unpublished</Badge>
+  );
+```
 
 Great. We now have a fully working details page for our reviews!
 
