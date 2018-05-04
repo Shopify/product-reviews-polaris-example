@@ -16,8 +16,8 @@ import {settings} from '../icons';
 
 function ReviewList({data: {loading, reviews}}) {
   /* Comment or uncomment the next two lines to toggle the loading state */
-  loading = true;
-  reviews = null;
+  // loading = true;
+  // reviews = null;
 
   /* Comment or uncomment the next line to toggle the empty state */
   // reviews = [];
@@ -38,11 +38,7 @@ function ReviewList({data: {loading, reviews}}) {
     reviews && reviews.length === 0 ? (
       <EmptyState
         heading="You haven't received any reviews yet"
-        action={{content: 'Configure settings'}}
-        secondaryAction={{
-          content: 'Learn more',
-          url: 'https://help.shopify.com',
-        }}
+        // add an "action" prop that links to the '/settings' route
         image="/review-empty-state.svg"
       >
         <p>Once you have received reviews they will display on this page.</p>
@@ -51,23 +47,11 @@ function ReviewList({data: {loading, reviews}}) {
 
   const reviewsIndex =
     reviews && reviews.length > 0 ? (
-      <Card>
-        <ResourceList
-          showHeader
-          resourceName={{singular: 'review', plural: 'reviews'}}
-          items={reviews}
-          renderItem={(review) => <ReviewListItem {...review} />}
-        />
-      </Card>
+      <Card>{/* add a ResourceList of reviews here... */}</Card>
     ) : null;
 
   return (
-    <Page
-      title="Product reviews"
-      secondaryActions={[
-        {icon: settings, content: 'Settings', url: '/settings'},
-      ]}
-    >
+    <Page title="Product reviews">
       {emptyStateContent}
       {loadingStateContent}
       {reviewsIndex}

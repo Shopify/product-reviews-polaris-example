@@ -17,7 +17,7 @@
 
 ### Workshop overview
 
-Together we will be building out a product review app to manage the customer submitted reviews on our products.
+Together we will be building out a product review app so merchants can receive and manage customer submitted reviews on their products.
 
 #### Goals
 
@@ -29,7 +29,7 @@ Give attendees a high level view of what Polaris (both the components and our do
 * Building the product review app using Polaris React
 * Q & A
 
-We chose to rebuild this app using Polaris React components for this workshop because it is an excellent example of the common patterns you will come across when building out an app for the Shopify admin. It's got a index page, a show page, and a settings page.
+We chose to rebuild this app using Polaris React components for this workshop because it is an excellent example of the common patterns you will come across when building out an app for Shopify merchants. It's got an index page, a show page, and a settings page.
 
 At the end of this workshop you will have built something that looks like this.
 
@@ -101,9 +101,9 @@ I will hand it over to Chloe now, and she will walk us through the review index.
 
 ## Step 2: Review index (Chloe)
 
-Go ahead and open up reviews list file located at`src/routes/ReviewList.js`. If you scroll to the bottom of the file, you will see we have a GraphQL query setup to fetch the list of reviews.
+Go ahead and open up the review list file located at`src/routes/ReviewList.js`. If you scroll to the bottom of the file, you will see we have a GraphQL query setup to fetch the list of reviews.
 
-This injects a `data` prop into our reviews list component that gives us an array of "reviews" and a "loading" boolean that tells us whether or not we're still fetching the reviews.
+This injects a `data` prop into our `ReviewList` component that gives us an array of "reviews" and a "loading" boolean that tells us whether or not we're still fetching the reviews.
 
 ```jsx
 export default graphql(gql`
@@ -148,27 +148,18 @@ import {
 } from '@shopify/polaris';
 ```
 
-Then we've got a functional React component named `ReviewsList` that returns the page.
+Then we've got a functional React component named `ReviewList` that returns the page.
 
 ```jsx
 function ReviewList({data: {loading, reviews}}) {
-  /*  */
-  return (
-    <Page
-      title="Product reviews"
-      secondaryActions={[
-        {icon: settings, content: 'Settings', url: '/settings'},
-      ]}
-    >
-      {/* Page content... */}
-    </Page>
-  );
+  /* Content logic... */
+  return <Page title="Product reviews">{/* Page content... */}</Page>;
 }
 ```
 
-The page component requires a `title` prop, which accepts a string to give the page a title. There are a number of optional props the page component accepts as well. One of those optional props is a list of secondary actions. Let's head over to the [style guide](https://polaris.shopify.com/components/structure/page) to explore what the `secondaryActions` prop accepts as a value. We want to add an action that will link to the settings page we've built.
+The page component requires a `title` prop, which accepts a string to give the page a title. There are a number of optional props the page component accepts as well. One of those optional props is a list of secondary actions. Let's head over to the [style guide](https://polaris.shopify.com/components/structure/page) to explore what the `secondaryActions` prop accepts as a value.
 
-We have already imported a gear shaped SVG we've included in this project. We'll use that as the icon property of our secondary action.
+We want to add an action that will link to the settings page we've built. We have already imported a gear shaped SVG we've included in this project. We'll use that as the icon property of our secondary action.
 
 ```jsx
 import {settings} from '../icons';
@@ -189,7 +180,7 @@ Add a `secondaryActions` prop to the page component, passing in an array with a 
 
 Now let's dig into the content of our page. When building a new view for your application you should always consider the different states your page will have based on the availability and quantity of the data being presented: loading, empty, some, and many.
 
-### Loading state
+#### Loading state
 
 We start with the loading state content. This is what is shown while the network request fetches the review data through GraphQL.
 
@@ -224,7 +215,7 @@ reviews = null;
 
 ### Empty state
 
-Next, let's go over how we built out our page's empty state using the Polaris `EmptyState` component. This is what will be displayed we aren't loading data but there are no reviews for the merchant's products yet.
+Next, let's go over how to build out our page's empty state using the Polaris `EmptyState` component. This is what will be displayed when we aren't loading data but there are no reviews for the merchant's products yet.
 
 Let's add the empty state component to our Polaris component import.
 
@@ -235,11 +226,6 @@ const emptyStateContent =
   reviews && reviews.length === 0 ? (
     <EmptyState
       heading="You haven't received any reviews yet"
-      action={{content: 'Configure settings'}}
-      secondaryAction={{
-        content: 'Learn more',
-        url: 'https://help.shopify.com',
-      }}
       image="/review-empty-state.svg"
     >
       <p>Once you have received reviews they will display on this page.</p>
@@ -250,24 +236,60 @@ const emptyStateContent =
 We can see what the empty state of our page looks like by commenting out lines 19 and 20, and uncommenting the code on line 23.
 
 ```jsx
+/* Comment or uncomment the next two lines to toggle the loading state */
+// loading = true;
+// reviews = null;
+
 /* Comment or uncomment the next line to toggle the empty state */
 reviews = [];
 ```
 
-Let's look at our page now that we've handled the case of a store without reviews. You can see that this empty state content is helpful for merchants to see that they don't have reviews yet, but that this is where they can find them once they do. Though it's not a required prop, the `action` we've given to the empty state component gives merchants a relevant, meaningful next step they can take in the meantime.
+Let's look at our page now that we've handled the case of a store without reviews. Uh oh, there's a lot of errors here! When running into errors with Polaris components, a good first step is to double check the style guide to make sure we haven't forgotten any required props.
+
+Looking at the [empty state page of the style guide](https://polaris-v2.shopify.com/components/structure/empty-state), we see an asterisk next the `action` prop. This means adding an `action` prop to the empty state component is **required**. This is because it is a best practice to give merchants a relevant, meaningful next step they can take after reaching an empty page.
+
+Let's add an action prop to our empty state component that will link the merchant to the settings page.
+
+```jsx
+<EmptyState
+  heading="You haven't received any reviews yet"
+  action={{content: 'Configure settings', url: '/settings'}}
+  image="/review-empty-state.svg"
+>
+  <p>Once you have received reviews they will display on this page.</p>
+</EmptyState>
+```
 
 ### Resource list
 
-The last variable we create stores the content of the list of reviews. For this we use the Polaris `ResourceList` component. `ResourceList` displays the key details of a collection of resources (reviews in this case) that allow a merchant to find, select, take bulk action on, or navigate to see more details about each resource.
+The last variable we create stores the content of the list of reviews. We use the length of the array of reviews we receive from GraphQL to determine whether or not we render the reviews list. To wrap our reviews list content, we use a card component just like we did for our loading state content.
 
-We use the length of the array of reviews we receive from GraphQL to determine whether or not we render the reviews list. To wrap our reviews list content, we use a card component just like we did for our loading state content.
+To build the list of reviews, we will use the Polaris `ResourceList` component. `ResourceList` displays the key details of a collection of resources (reviews in this case) that allow a merchant to find, select, take bulk action on, or navigate to see more details about each resource.
 
-Because every type of resource is different and requires different information to be shown, we allow you to customize the display of each item in the list by using a custom component instead of the `ResourceList.Item` subcomponent. For this app, we created a custom component called `ReviewListItem`.
+Because every type of resource is different and requires different information to be shown, we allow you to customize the display of each item in the list by using a custom component instead of the `ResourceList.Item` subcomponent. For this app, we created a custom component called `ReviewListItem` and have already imported it into this file.
+
+Let's start building our index. First, place a resource list component inside of the card in the `reviewsIndex` variable.
 
 ```jsx
 const reviewsIndex =
   reviews && reviews.length > 0 ? (
-    <Card sectioned>
+    <Card>
+      <ResourceList />
+    </Card>
+  ) : null;
+```
+
+Next, let's go back to the [Polaris style guide](https://polaris.shopify.com) and search for "resource list" so we can explore what props to pass into to our resource list.
+
+* The `showHeader` prop optional and takes a boolean that toggles whether or not a heading with a count of the list items is shown.
+* The `resourceName` prop is also optional. It takes an object that specifies the singular and plural names of the resources in question so the component can use them when referencing the resources in places like the heading. If left blank, the resource list will just default to calling them items.
+* The `items` prop is required as well and takes an array of resource list item objects. We pass the resource list our array of reviews here.
+* The `renderItem` prop is a callback used by the resource list to map out the list of resources the `items` prop receives. Here is where we will instruct the component to render each review with our custom `ReviewListItem` component.
+
+```jsx
+const reviewsIndex =
+  reviews && reviews.length > 0 ? (
+    <Card>
       <ResourceList
         showHeader
         resourceName={{singular: 'review', plural: 'reviews'}}
@@ -277,13 +299,6 @@ const reviewsIndex =
     </Card>
   ) : null;
 ```
-
-Let's go back to the Polaris style guide to explore the props we're passing to our resource list.
-
-* The `showHeader` prop optional and takes a boolean that toggles whether or not a heading with a count of the list items is shown.
-* The `resourceName` prop is also optional. It takes an object that specifies the singular and plural names of the resources in question so the component can use them when referencing the resources in places like the heading. If left blank, the resource list will just default to calling them items.
-* The `renderItem` prop is a callback used by the resource list to map out our array of reviews. This callback is where we tell the component to render each review with our custom `ReviewListItem` component.
-* The `items` prop is required as well and takes an array of resource list item objects. We pass the resource list our array of reviews here.
 
 The reviews index is the last child of our page component.
 
@@ -388,7 +403,7 @@ export default graphql(gql`
 );
 ```
 
-Now Dom will walk us through our third step: building out the review detail view that each review in our list links to.
+Now Dom will walk us through building out the review detail page that each review in our resource list links to.
 
 ## Step 3: Review details (Dom)
 
