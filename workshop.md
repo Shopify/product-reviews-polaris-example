@@ -200,6 +200,7 @@ const loadingStatePageContent = loading ? (
     <TextContainer>
       <SkeletonDisplayText size="small" />
       <SkeletonBodyText />
+      <SkeletonBodyText />
     </TextContainer>
   </Card>
 ) : null;
@@ -212,6 +213,8 @@ The loading state content is already a child of our page. We can see what our lo
 loading = true;
 reviews = null;
 ```
+
+![Loading state screenshot](public/images/loading-state-screenshot.png)
 
 ### Empty state
 
@@ -259,6 +262,10 @@ Let's add an action prop to our empty state component that will link the merchan
   <p>Once you have received reviews they will display on this page.</p>
 </EmptyState>
 ```
+
+Now we can see our empty state.
+
+![Empty state screenshot](public/images/empty-state-screenshot.png)
 
 ### Resource list
 
@@ -313,11 +320,14 @@ The reviews index is the last child of our page component.
 </Page>
 ```
 
-Finally, our reviews list view is complete! Your code should look something like this.
+Finally, our reviews list view is complete!
+
+<details>
+<summary>Click to view the final state of the ReviewList.js code</summary>
 
 ```jsx
-return (
-  import {graphql} from 'react-apollo';
+import React from 'react';
+import {graphql} from 'react-apollo';
 import gql from 'graphql-tag';
 import {
   Page,
@@ -347,11 +357,7 @@ function ReviewList({data: {loading, reviews}}) {
     reviews && reviews.length === 0 ? (
       <EmptyState
         heading="You haven't received any reviews yet"
-        action={{content: 'Configure settings'}}
-        secondaryAction={{
-          content: 'Learn more',
-          url: 'https://help.shopify.com',
-        }}
+        action={{content: 'Configure settings', url: '/settings'}}
         image="/review-empty-state.svg"
       >
         <p>Once you have received reviews they will display on this page.</p>
@@ -360,7 +366,7 @@ function ReviewList({data: {loading, reviews}}) {
 
   const reviewsIndex =
     reviews && reviews.length > 0 ? (
-      <Card sectioned>
+      <Card>
         <ResourceList
           showHeader
           resourceName={{singular: 'review', plural: 'reviews'}}
@@ -400,8 +406,10 @@ export default graphql(gql`
     }
   }
 `)(ReviewList);
-);
 ```
+
+</details>
+<br />
 
 Now Dom will walk us through building out the review detail page that each review in our resource list links to.
 
