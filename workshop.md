@@ -157,15 +157,25 @@ function ReviewList({data: {loading, reviews}}) {
 }
 ```
 
-The page component requires a `title` prop, which accepts a string to give the page a title. There are a number of optional props the page component accepts as well. One of those optional props is a list of secondary actions. Let's head over to the [style guide](https://polaris.shopify.com/components/structure/page) to explore what the `secondaryActions` prop accepts as a value.
+The page component requires a `title` prop, which accepts a string to give the page a title.
 
-We want to add an action that will link to the settings page we've built. We have already imported a gear shaped SVG we've included in this project. We'll use that as the icon property of our secondary action.
+So far, our page looks like this
+
+![Page title screenshot](public/images/page-title-screenshot.png)
+
+There are a number of optional props the page component accepts as well. One of those optional props is a list of secondary actions. Let's head over to the [style guide](https://polaris.shopify.com/components/structure/page) to explore what the `secondaryActions` prop accepts as a value.
+
+We want to add an action that will link to the settings page we've built so our page looks something like this.
+
+![Page with secondary action screenshot](public/images/page-actions-screenshot.png)
+
+We have already imported the gear shaped SVG we've included in this project. We'll use that as the icon property of our secondary action.
 
 ```jsx
 import {settings} from '../icons';
 ```
 
-Add a `secondaryActions` prop to the page component, passing in an array with a single object that will map to a settings button below our page title. As you can see in the style guide prop explorer, secondary action objects can have a lot of different properties. We will only give our settings action an icon, content, and url.
+Add a `secondaryActions` prop to the page component. Give it an array with a single object. This array will map to a settings button below our page title. As you can see in the style guide prop explorer, secondary action objects can have a lot of different properties. We will only give our settings action an icon, content, and url.
 
 ```jsx
 <Page
@@ -183,6 +193,8 @@ Now let's dig into the content of our page. When building a new view for your ap
 #### Loading state
 
 We start with the loading state content. This is what is shown while the network request fetches the review data through GraphQL.
+
+![Loading state screenshot](public/images/loading-state-screenshot.png)
 
 We've wrapped the loading state content with a card component. Cards are used to group similar concepts and tasks together to make Shopify easier for merchants to scan, read, and get things done.
 
@@ -214,11 +226,11 @@ loading = true;
 reviews = null;
 ```
 
-![Loading state screenshot](public/images/loading-state-screenshot.png)
-
 ### Empty state
 
 Next, let's go over how to build out our page's empty state using the Polaris `EmptyState` component. This is what will be displayed when we aren't loading data but there are no reviews for the merchant's products yet.
+
+![Empty state screenshot](public/images/empty-state-screenshot.png)
 
 Let's add the empty state component to our Polaris component import.
 
@@ -263,15 +275,15 @@ Let's add an action prop to our empty state component that will link the merchan
 </EmptyState>
 ```
 
-Now we can see our empty state.
-
-![Empty state screenshot](public/images/empty-state-screenshot.png)
+Now we can see our empty state!
 
 ### Resource list
 
 The last variable we create stores the content of the list of reviews. We use the length of the array of reviews we receive from GraphQL to determine whether or not we render the reviews list. To wrap our reviews list content, we use a card component just like we did for our loading state content.
 
 To build the list of reviews, we will use the Polaris `ResourceList` component. `ResourceList` displays the key details of a collection of resources (reviews in this case) that allow a merchant to find, select, take bulk action on, or navigate to see more details about each resource.
+
+![Resource list screenshot](public/images/resource-list-screenshot.png)
 
 Because every type of resource is different and requires different information to be shown, we allow you to customize the display of each item in the list by using a custom component instead of the `ResourceList.Item` subcomponent. For this app, we created a custom component called `ReviewListItem` and have already imported it into this file.
 
