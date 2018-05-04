@@ -25,10 +25,11 @@ function ReviewList({data: {loading, reviews}}) {
   const loadingStateContent = loading ? (
     <Card sectioned>
       <TextContainer>
-        {/* Go to https://polaris.shopify.com to view the style guide.*/
-        /* Use the search bar (top right) to find "skeleton" components. */
-        /* Look at the different examples provided by selecting from the example menu at the top of the component pages. */
-        /* Paste some skeleton content from the component playground here  */}
+        {/* Let's add skeleton content from the style guide playground here */}
+        {/* First, go to https://polaris.shopify.com to view the style guide.*/}
+        {/* Use the search bar (top right) to find "skeleton" components. */}
+        {/* Look at the different examples provided by selecting from the example menu at the top of the component pages. */}
+        {/* Use skeleton components to replace these comments! */}
       </TextContainer>
     </Card>
   ) : null;
@@ -37,11 +38,7 @@ function ReviewList({data: {loading, reviews}}) {
     reviews && reviews.length === 0 ? (
       <EmptyState
         heading="You haven't received any reviews yet"
-        action={{content: 'Configure settings'}}
-        secondaryAction={{
-          content: 'Learn more',
-          url: 'https://help.shopify.com',
-        }}
+        // add an "action" prop that links to the '/settings' route
         image="/review-empty-state.svg"
       >
         <p>Once you have received reviews they will display on this page.</p>
@@ -50,23 +47,11 @@ function ReviewList({data: {loading, reviews}}) {
 
   const reviewsIndex =
     reviews && reviews.length > 0 ? (
-      <Card>
-        <ResourceList
-          showHeader
-          resourceName={{singular: 'review', plural: 'reviews'}}
-          items={reviews}
-          renderItem={(review) => <ReviewListItem {...review} />}
-        />
-      </Card>
+      <Card>{/* add a ResourceList of reviews here... */}</Card>
     ) : null;
 
   return (
-    <Page
-      title="Product reviews"
-      secondaryActions={[
-        {icon: settings, content: 'Settings', url: '/settings'},
-      ]}
-    >
+    <Page title="Product reviews">
       {emptyStateContent}
       {loadingStateContent}
       {reviewsIndex}
