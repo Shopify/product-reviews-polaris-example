@@ -196,11 +196,20 @@ We start with the loading state content. This is what is shown while the network
 
 ![Loading state screenshot](public/images/loading-state-screenshot.png)
 
-We've wrapped the loading state content with a card component. Cards are used to group similar concepts and tasks together to make Shopify easier for merchants to scan, read, and get things done.
+We hold the content of our loading state in a variable that uses the `loading` property of the `data` prop to determine whether or not we should show this content.
 
-We hold the content of our loading state in a variable that uses the `loading` property of the `data` prop to determine whether or not we should show this content. Polaris comes with a set of skeleton content components that can be used to communicate to the merchant that data is currently being fetched.
+We wrap the loading state content with a card component. Cards are used to group similar concepts and tasks together to make Shopify easier for merchants to scan, read, and get things done.
 
-* Let's go back to the [style guide](https://polaris.shopify.com)
+```jsx
+const loadingStatePageContent = loading ? (
+  <Card sectioned>
+    <TextContainer>{/* Skeleton components... */}</TextContainer>
+  </Card>
+) : null;
+```
+
+Polaris comes with a set of skeleton content components that can be used to communicate to the merchant that data is currently being fetched. Let's go back to the [style guide](https://polaris.shopify.com) take a look at those components.
+
 * Use the search bar (top right) to find the "skeleton" components we've imported
 * Once you get to a skeleton component page, look at the different examples provided by selecting from the example menu at the top of the page.
 * Play with the component code in the playground and explore the props list
@@ -279,13 +288,24 @@ Now we can see our empty state!
 
 ### Resource list
 
-The last variable we create stores the content of the list of reviews. We use the length of the array of reviews we receive from GraphQL to determine whether or not we render the reviews list. To wrap our reviews list content, we use a card component just like we did for our loading state content.
+The last variable we create stores the content of the list of reviews. We use the length of the array of reviews we receive from GraphQL to determine whether or not we render the reviews list. To wrap our reviews list content, we use a card component just like we did for our loading and empty state content.
+
+```jsx
+const reviewsIndex =
+  reviews && reviews.length > 0 ? (
+    <Card>{/* add a ResourceList of reviews here... */}</Card>
+  ) : null;
+```
 
 To build the list of reviews, we will use the Polaris `ResourceList` component. `ResourceList` displays the key details of a collection of resources (reviews in this case) that allow a merchant to find, select, take bulk action on, or navigate to see more details about each resource.
 
 ![Resource list screenshot](public/images/resource-list-screenshot.png)
 
-Because every type of resource is different and requires different information to be shown, we allow you to customize the display of each item in the list by using a custom component instead of the `ResourceList.Item` subcomponent. For this app, we created a custom component called `ReviewListItem` and have already imported it into this file.
+Since every type of resource is different and requires different information to be shown, we allow you to customize the display of each item in the list by using a custom component instead of the `ResourceList.Item` subcomponent. For this app, we created a custom component called `ReviewListItem` and have already imported it into this file.
+
+```jsx
+import ReviewListItem from '../components/ReviewListItem';
+```
 
 Let's start building our index. First, place a resource list component inside of the card in the `reviewsIndex` variable.
 
@@ -300,10 +320,10 @@ const reviewsIndex =
 
 Next, let's go back to the [Polaris style guide](https://polaris.shopify.com) and search for "resource list" so we can explore what props to pass into to our resource list.
 
-* The `showHeader` prop optional and takes a boolean that toggles whether or not a heading with a count of the list items is shown.
-* The `resourceName` prop is also optional. It takes an object that specifies the singular and plural names of the resources in question so the component can use them when referencing the resources in places like the heading. If left blank, the resource list will just default to calling them items.
-* The `items` prop is required as well and takes an array of resource list item objects. We pass the resource list our array of reviews here.
-* The `renderItem` prop is a callback used by the resource list to map out the list of resources the `items` prop receives. Here is where we will instruct the component to render each review with our custom `ReviewListItem` component.
+* The `showHeader` prop is an optional boolean that toggles whether or not a heading with a count of the list items is shown.
+* The `resourceName` prop is also optional. It takes an object that specifies the singular and plural names of the resources so the component can use them when referencing the resources in places like the heading. If left blank, the resource list will just default to calling them items.
+* The `items` prop is required as well and takes an array of objects. We pass the resource list our array of review objects here.
+* The `renderItem` prop is a callback function used by the resource list to map over and render the list of resources the `items` prop receives. Here is where we will instruct the component to render each review with our custom `ReviewListItem` component.
 
 ```jsx
 const reviewsIndex =
@@ -335,7 +355,7 @@ The reviews index is the last child of our page component.
 Finally, our reviews list view is complete!
 
 <details>
-<summary>Click to view the final state of the ReviewList.js code</summary>
+<summary>Click to view the finished ReviewList.js code</summary>
 
 ```jsx
 import React from 'react';
