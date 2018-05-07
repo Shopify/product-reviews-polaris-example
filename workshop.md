@@ -41,6 +41,10 @@ At the end of this workshop you will have built something that looks like this.
 
 [Live demo](https://polaris-product-reviews.glitch.me/)
 
+If for any reason you cannot get your development environement working, we have provided an alternative through glitch.com. You can use this to follow through the workshop using only your browser.
+
+https://glitch.com/edit/#!/polaris-workshop-starter
+
 ## Step 1: Setting up your app (Dom)
 
 `git clone git@github.com:Shopify/product-reviews-polaris-example.git`
