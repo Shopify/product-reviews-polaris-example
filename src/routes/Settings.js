@@ -7,10 +7,6 @@ import {
   Page,
   Layout,
   Form,
-  ChoiceList,
-  Checkbox,
-  TextField,
-  FormLayout,
   SkeletonBodyText,
   SkeletonDisplayText,
   TextContainer,
@@ -113,7 +109,6 @@ class Settings extends React.Component {
     const autoPublish = value[0] === 'enabled';
     this.setState({autoPublish});
   }
-
 
   @autobind
   handleFormSubmit() {

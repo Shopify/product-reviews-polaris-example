@@ -145,11 +145,11 @@ function ReviewList({data: {loading, reviews}}) {
 }
 ```
 
-The page component requires a `title` prop, which accepts a `string` to give the page a title. We've given it the title "Product reviews".
+The `Page` component requires a `title` prop, which accepts a `string` to give the page a title. We've given it the title "Product reviews".
 
-There are a number of optional props the page component accepts as well. One of those optional props is a list of secondary actions. Let's head over to the [style guide](https://polaris.shopify.com/components/structure/page) to find out what the `secondaryActions` prop accepts as a value.
+There are a number of optional props the `Page` component accepts as well. One of those optional props is a list of secondary actions. Let's head over to the [style guide](https://polaris.shopify.com/components/structure/page) to find out what the `secondaryActions` prop accepts as a value.
 
-Add a `secondaryActions` prop to the page component. Since it it accepts a `SecondaryAction[]`, give it an array with a single object. This array will map to a settings button below our page title. As you can see in the style guide prop explorer (which opens when you click on the `secondaryActions` prop), secondary action objects can have a lot of different properties. We will only give our settings action an icon, content, and url. We'll use that gear shaped SVG as the icon property of our secondary action.
+Add a `secondaryActions` prop to the `Page` component. Since it it accepts a `SecondaryAction[]`, give it an array with a single object. This array will map to a settings button below our page title. As you can see in the style guide prop explorer (which opens when you click on the `secondaryActions` prop), secondary action objects can have a lot of different properties. We will only give our settings action an icon, content, and url. We'll use that gear shaped SVG as the icon property of our secondary action.
 
 ```jsx
 <Page
@@ -320,7 +320,7 @@ const reviewsIndex =
   ) : null;
 ```
 
-The reviews index is the last child of our page component.
+The reviews index is the last child of our `Page` component.
 
 ```jsx
 <Page

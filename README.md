@@ -1,9 +1,5 @@
 # Product Reviews Polaris Example App
 
-This is the Product Reviews app built with Polaris as an example for the Unite workshop.
+This is a self-paced version of the Product Reviews app built with Polaris as an example of Polaris React for the Unite leader-led workshop.
 
-## Getting started
-
-1. `git clone git@github.com:Shopify/product-reviews-polaris-example.git`
-1. `npm install`
-1. `npm start`
+It is currently being used for Dev Degree students to learn FED.
