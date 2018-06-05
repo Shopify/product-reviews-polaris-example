@@ -43,7 +43,7 @@ By the end of this workshop you will have built something that looks like this.
 
 ## Step 1: Setting up your app
 
-`git clone -b devdegree git@github.com:Shopify/product-reviews-polaris-example.git`
+`git clone -b devdegree product-reviews-polaris-example`
 
 Now change into the new directory we just cloned
 
