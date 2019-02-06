@@ -244,7 +244,7 @@ reviews = [];
 
 Let's look at our page now that we've handled the case of a store without reviews. Uh oh, there's a lot of errors here! When running into errors with Polaris components, a good first step is to double check the style guide to make sure we haven't forgotten any required props.
 
-Looking at the [empty state page of the style guide](https://polaris-v2.shopify.com/components/structure/empty-state), we see an asterisk next the `action` prop. This means adding an `action` prop to the empty state component is **required**. This is because it is a best practice to give merchants a relevant, meaningful next step they can take after reaching an empty page.
+Looking at the [empty state page of the style guide](https://polaris.shopify.com/components/structure/empty-state), we see an asterisk next the `action` prop. This means adding an `action` prop to the empty state component is **required**. This is because it is a best practice to give merchants a relevant, meaningful next step they can take after reaching an empty page.
 
 Let's add an action prop to our empty state component that will link the merchant to the settings page.
 
