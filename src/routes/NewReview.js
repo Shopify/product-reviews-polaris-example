@@ -10,57 +10,79 @@ import {
   SkeletonBodyText,
   SkeletonDisplayText,
   TextContainer,
-  ChoiceList,
   FormLayout,
   Checkbox,
   TextField,
   Button,
+  Select,
 } from '@shopify/polaris';
 
 class NewReview extends React.Component {
   state = {
-    newsletter: false,
-    email: '',
+    review: {
+      name: '',
+      avatar: '',
+      productName: '',
+      rating: 0,
+      title: '',
+      comments: '',
+    },
   };
 
   render() {
-    const {newsletter, email} = this.state;
-
-    const handleSubmit = (event) => {
-      this.setState({newsletter: false, email: ''});
-    };
-
-    const handleChange = (field) => {
-      return (value) => this.setState({[field]: value});
-    };
 
     return (
       <Form onSubmit={this.handleSubmit}>
-        <FormLayout>
-          <Checkbox
-            label="Sign up for the Polaris newsletter"
-            checked={newsletter}
-            onChange={this.handleChange('newsletter')}
-          />
-
-          <TextField
-            value={email}
-            onChange={this.handleChange('email')}
-            label="Email"
-            type="email"
-            helpText={
-              <span>
-                We’ll use this email address to inform you on future changes to
-                Polaris.
-              </span>
-            }
-          />
-          <Button submit>Submit</Button>
-        </FormLayout>
+        <Page
+          title="New Review"
+        >
+          <FormLayout>
+            <FormLayout.Group>
+              <TextField type="text" label="Username" />
+              <TextField type="text" label="Avatar" />
+            </FormLayout.Group>
+            <FormLayout.Group>
+              <TextField type="text" label="Product Name" />
+              <TextField type="number" label="Rating" />
+            </FormLayout.Group>
+            <FormLayout.Group>
+              <TextField type="text" label="Title" />
+              <TextField
+                label="Comments"
+                type="text"
+              />
+            </FormLayout.Group>
+            <Button submit primary>Submit</Button>
+          </FormLayout>
+        </Page>
       </Form>
     );
+  }
+  @autobind
+  handleSubmit() {
+    const {saveNewReviewMutation} = this.props;
+  }
+
+  @autobind
+  handleChange(field) {
+    return (value) => this.setState({[field]: value});
   }
 
 }
 
-export default NewReview;
+export default compose(
+  graphql(
+    gql`
+      mutation addReview(
+        $autoPublish: Boolean
+        $emailNotifications: Boolean
+        $email: String
+      ) {
+        id
+      }
+    `,
+    {
+      name: 'addReviewMutation',
+    },
+  ),
+ )(NewReview);

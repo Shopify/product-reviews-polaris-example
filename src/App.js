@@ -31,7 +31,7 @@ function App() {
             <Route exact path="/" component={ReviewList} />
             <Route path="/reviews/:id" component={ReviewDetails} />
             <Route exact path="/settings" component={Settings} />
-            <Route exact path="reviews-new" component={NewReview} />
+            <Route exact path="/reviews-new" component={NewReview} />
             <Route component={NotFound} />
           </Switch>
         </Router>
