@@ -15,6 +15,7 @@ import {
 import ReviewListItem from '../components/ReviewListItem';
 import {
   settings,
+  star,
 } from '../icons';
 
 function ReviewList({
@@ -77,7 +78,7 @@ function ReviewList({
   return (
     <Page
       title="Product reviews"
-      secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}, {content: 'Add new review', url: '/new'}]}
+      secondaryActions={[{icon: settings, content: 'Settings', url: '/settings'}, {icon: star, content: 'Add new review', url: '/new'}]}
     >
       {emptyStateContent}
       {loadingStateContent}
