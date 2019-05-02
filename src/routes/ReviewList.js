@@ -9,7 +9,6 @@ import {
   Card,
   ResourceList,
   SkeletonBodyText,
-  SkeletonDisplayText,
   TextContainer,
 } from '@shopify/polaris';
 

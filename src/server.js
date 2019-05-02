@@ -9,7 +9,7 @@ const app = new koa();
 const router = new koaRouter();
 /* eslint-enable babel/new-cap */
 const PORT = 3001;
-
+let id = 342;
 const typeDefs = `
   type Product {
     name: String
@@ -47,7 +47,7 @@ const typeDefs = `
 
   type Mutation {
     updateSettings(autoPublish: Boolean, emailNotifications: Boolean, email: String): Settings
-    createReview(name: String, content: String, product: String, rating: Int): Review
+    createReview(name: String, title: String, content: String, product: String, rating: Int): Review
   }
 `;
 
@@ -113,8 +113,8 @@ const resolvers = {
       };
     },
     createReview: (root, args) => {
-      const product = reviews.map(a => a.product).find(product.name == args.product);
-      if product {
+      let product = reviews.map(a => a.product).find(product => product.name == args.product);
+      if (product) {
         product.averageRating = ((product.averageRating * product.reviewCount) + args.rating)/(product.reviewCount + 1);
         product.reviewCount++;
       }
@@ -126,9 +126,9 @@ const resolvers = {
         }
       }
 
-      review = {
+      let review = {
         id: id++,
-        name: args.title,
+        title: args.title,
         content: args.content,
         rating: args.rating,
         customer: {
@@ -138,6 +138,8 @@ const resolvers = {
         status: 'unpublished',
         date: new Date(Date.now()).toLocaleString('EN', {month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'}),
       }
+      reviews.push(review);
+      console.log(reviews);
     }
   },
 };
