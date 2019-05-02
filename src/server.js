@@ -47,6 +47,7 @@ const typeDefs = `
 
   type Mutation {
     updateSettings(autoPublish: Boolean, emailNotifications: Boolean, email: String): Settings
+    createReview(name: String, content: String, product: String, rating: Int): Review
   }
 `;
 
@@ -111,6 +112,33 @@ const resolvers = {
         email: args.email,
       };
     },
+    createReview: (root, args) => {
+      const product = reviews.map(a => a.product).find(product.name == args.product);
+      if product {
+        product.averageRating = ((product.averageRating * product.reviewCount) + args.rating)/(product.reviewCount + 1);
+        product.reviewCount++;
+      }
+      else {
+        product = {
+          name: args.product,
+          average: args.rating,
+          reviewCount: 1,
+        }
+      }
+
+      review = {
+        id: id++,
+        name: args.title,
+        content: args.content,
+        rating: args.rating,
+        customer: {
+          name: args.name
+        },
+        product,
+        status: 'unpublished',
+        date: new Date(Date.now()).toLocaleString('EN', {month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'}),
+      }
+    }
   },
 };
 

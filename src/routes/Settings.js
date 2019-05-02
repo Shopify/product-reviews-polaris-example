@@ -10,6 +10,10 @@ import {
   SkeletonBodyText,
   SkeletonDisplayText,
   TextContainer,
+  ChoiceList,
+  FormLayout,
+  Checkbox,
+  TextField,
 } from '@shopify/polaris';
 
 class Settings extends React.Component {
@@ -71,20 +75,45 @@ class Settings extends React.Component {
     const settingsFormContent = !loading ? (
       <Layout>
         {/* Annotated sections are useful in settings pages to give more context about what the merchant will change with each setting. */}
-        <Layout.AnnotatedSection
-          title="Auto publish"
-          description="Automatically check new reviews for spam and then publish them."
-        >
-          <Card sectioned>
-            {/* Choice lists display a list of checkboxes or radio buttons to gather choice input. See the style guide to learn more https://polaris.shopify.com/components/forms/choice-list */}
-          </Card>
+        <Layout.AnnotatedSection>
+          <ChoiceList
+            title="Auto publish"
+            selected={autoPublishSelected}
+            choices={[
+              {
+                label: 'Enabled',
+                value: 'enabled',
+                helpText:
+                  'New reviews are checked for spam and then automatically published.',
+              },
+              {
+                label: 'Disabled',
+                value: 'disabled',
+                helpText: 'You must manually approve and publish new reviews.',
+              },
+            ]}
+            onChange={this.handleAutoPublishChange}
+          />
         </Layout.AnnotatedSection>
         <Layout.AnnotatedSection
           title="Email settings"
           description="Choose if you want to receive email notifications for each review."
         >
           <Card sectioned>
-            {/* Add the components for gathering input on email settings. */}
+            <FormLayout>
+              <TextField
+                value={email}
+                label="Email"
+                type="email"
+                error={emailError}
+                onChange={this.handleEmailChange}
+              />
+              <Checkbox
+                checked={emailNotifications}
+                label="Send me an email when a review is submitted."
+                onChange={this.handleEmailNotificationChange}
+              />
+            </FormLayout>
           </Card>
         </Layout.AnnotatedSection>
       </Layout>
@@ -96,6 +125,11 @@ class Settings extends React.Component {
         <Page
           title="Settings"
           breadcrumbs={[{content: 'Product reviews', url: '/'}]}
+          primaryAction={{
+            content: 'Save',
+            submit: true,
+            disabled: emailError,
+          }}
         >
           {loadingStateContent}
           {settingsFormContent}
@@ -114,6 +148,10 @@ class Settings extends React.Component {
   handleFormSubmit() {
     const {updateSettingsMutation} = this.props;
     const {autoPublish, emailNotifications, email, emailError} = this.state;
+    // We prevent form submission when there is an error in the email field.
+    if (emailError) {
+      return;
+    }
 
     updateSettingsMutation({
       variables: {
@@ -122,6 +160,28 @@ class Settings extends React.Component {
         email,
       },
     });
+  }
+
+  @autobind
+  handleEmailNotificationChange(receiveNotifications) {
+    const {email} = this.state;
+    const emailError =
+    receiveNotifications && email === ''
+      ? 'Enter an email to get review notifications.'
+      : undefined;
+    this.setState({emailNotifications: receiveNotifications, emailError});
+  }
+
+  @autobind
+  handleEmailChange(value) {
+    const {emailNotifications} = this.state;
+
+    // We handle the error state of the email text field at the same time that we handle the field's onChange event, just in case the merchant removes their email but forgets to uncheck the email notification checkbox.
+    const emailError =
+      emailNotifications && value === ''
+        ? 'Enter an email to get review notifications.'
+        : false;
+    this.setState({email: value, emailError});
   }
 }
 
