@@ -67,17 +67,17 @@ function ReviewDetails(props) {
     >
       <Layout>
         <Layout.Section>
-          <Card title="Review" sectioned>
+          <Card sectioned>
             <Stack vertical>
               <Stack alignment="center">
-                <Avatar customer name={review.customer.name} />
-                <Stack.Item fill>
-                  <p>{review.customer.name}</p>
-                </Stack.Item>
-                {badge}
                 <Rating value={review.rating} />
-                <p>{review.content}</p>
+                <p>{review.customer.name}</p>
+                <Stack.Item fill />
+                <Avatar customer name={review.customer.name} />
               </Stack>
+              <p>{review.content}</p>
+              <Stack.Item fill />
+              {badge}
             </Stack>
           </Card>
         </Layout.Section>
